@@ -1,3 +1,4 @@
+import 'package:app_volailles/utils/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:app_volailles/models/bird.dart';
@@ -9,8 +10,8 @@ class StatisticsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final maleCount = birds.where((b) => b.gender == 'Male').length;
-    final femaleCount = birds.where((b) => b.gender == 'Female').length;
+    final maleCount = birds.where((b) => b.gender == Constants.male).length;
+    final femaleCount = birds.where((b) => b.gender == Constants.female).length;
 
     return Scaffold(
       appBar: AppBar(title: const Text("Statistiques des oiseaux")),

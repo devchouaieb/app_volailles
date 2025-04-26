@@ -16,7 +16,7 @@ const BirdSchema = new mongoose.Schema({
     type: String,
     enum: ['male', 'female', 'unknown'],
     default: 'unknown',
-    set: function(value) {
+    set: function (value) {
       return value ? value.toLowerCase() : 'unknown';
     }
   },
@@ -42,10 +42,17 @@ const BirdSchema = new mongoose.Schema({
     type: Boolean,
     default: false
   },
+  forSale: {
+    type: Boolean,
+    default: false
+  },
   soldDate: {
     type: Date
   },
   soldPrice: {
+    type: Number
+  },
+  askingPrice: {
     type: Number
   },
   buyerInfo: {

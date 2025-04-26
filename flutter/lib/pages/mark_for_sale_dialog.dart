@@ -3,11 +3,13 @@ import 'package:app_volailles/models/bird.dart';
 
 class MarkForSaleDialog extends StatefulWidget {
   final Bird bird;
+  final BuildContext dialogContext;
   final void Function(double askingPrice) onSuccess;
 
   const MarkForSaleDialog({
     Key? key,
     required this.bird,
+    required this.dialogContext,
     required this.onSuccess,
   }) : super(key: key);
 
@@ -72,7 +74,7 @@ class _MarkForSaleDialogState extends State<MarkForSaleDialog> {
       ),
       actions: [
         TextButton(
-          onPressed: () => Navigator.of(context).pop(),
+          onPressed: () => Navigator.of(widget.dialogContext).pop(),
           child: const Text('Annuler'),
         ),
         ElevatedButton(

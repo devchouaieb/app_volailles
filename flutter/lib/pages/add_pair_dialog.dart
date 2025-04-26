@@ -1,3 +1,4 @@
+import 'package:app_volailles/utils/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:app_volailles/models/bird.dart';
 import 'package:app_volailles/models/pair.dart';
@@ -26,11 +27,11 @@ class _AddPairDialogState extends State<AddPairDialog> {
     super.initState();
     _males =
         widget.birds
-            .where((bird) => bird.gender.toLowerCase() == 'male')
+            .where((bird) => bird.gender.toLowerCase() == Constants.male)
             .toList();
     _females =
         widget.birds
-            .where((bird) => bird.gender.toLowerCase() == 'female')
+            .where((bird) => bird.gender.toLowerCase() == Constants.female)
             .toList();
   }
 

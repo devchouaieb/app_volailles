@@ -47,10 +47,13 @@ class BirdService {
   Future<List<Bird>> getSoldBirds() async {
     try {
       print('🔄 Récupération des oiseaux vendus...');
-      final response = await _apiService.get('birds/sold/with-buyers');
+      final response = await _apiService.get('birds/sold');
       print('📦 Réponse API: $response');
-
-      if (response is Map && response['data'] is List) {
+      if (response is List) {
+        final birds = response.map((json) => Bird.fromApi(json)).toList();
+        print('✅ ${birds.length} oiseaux récupérés');
+        return birds;
+      }else if (response is Map && response['data'] is List) {
         final birds =
             (response['data'] as List)
                 .map((json) => Bird.fromApi(json))
@@ -235,6 +238,62 @@ class BirdService {
     } catch (e) {
       print('⚠️ Erreur lors de la vente de l\'oiseau: $e');
       throw Exception('Error selling bird: ${e.toString()}');
+    }
+  }
+
+  // Récupérer les oiseaux disponibles à la vente
+  Future<List<Bird>> getBirdsForSale() async {
+    try {
+      print('🔄 Récupération des oiseaux disponibles à la vente...');
+      final response = await _apiService.get('birds/for-sale');
+      print('📦 Réponse API: $response');
+
+      if (response is List) {
+        final birds = response.map((json) => Bird.fromApi(json)).toList();
+        print('✅ ${birds.length} oiseaux disponibles à la vente récupérés');
+        return birds;
+      } else if (response is Map && response['data'] is List) {
+        final birds =
+            (response['data'] as List)
+                .map((json) => Bird.fromApi(json))
+                .toList();
+        print('✅ ${birds.length} oiseaux disponibles à la vente récupérés');
+        return birds;
+      }
+
+      print('⚠️ Format de réponse invalide: $response');
+      return [];
+    } catch (e) {
+      print('⚠️ Erreur lors de la récupération des oiseaux disponibles à la vente: $e');
+      return [];
+    }
+  }
+
+  // Récupérer les oiseaux disponibles (non vendus et non appariés)
+  Future<List<Bird>> getAvailableBirds() async {
+    try {
+      print('🔄 Récupération des oiseaux disponibles...');
+      final response = await _apiService.get('birds/available');
+      print('📦 Réponse API: $response');
+
+      if (response is List) {
+        final birds = response.map((json) => Bird.fromApi(json)).toList();
+        print('✅ ${birds.length} oiseaux disponibles récupérés');
+        return birds;
+      } else if (response is Map && response['data'] is List) {
+        final birds =
+            (response['data'] as List)
+                .map((json) => Bird.fromApi(json))
+                .toList();
+        print('✅ ${birds.length} oiseaux disponibles récupérés');
+        return birds;
+      }
+
+      print('⚠️ Format de réponse invalide: $response');
+      return [];
+    } catch (e) {
+      print('⚠️ Erreur lors de la récupération des oiseaux disponibles: $e');
+      return [];
     }
   }
 }

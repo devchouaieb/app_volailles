@@ -121,11 +121,73 @@ const getSelledBirds = asyncHandler(async (req, res) => {
   res.status(200).json(birds);
 });
 
+// @desc    Get all birds marked for sale
+// @route   GET /api/birds/for-sale
+// @access  Private
+const getBirdsForSale = asyncHandler(async (req, res) => {
+  const birds = await Bird.find({ 
+    forSale: true,
+    sold: false // Only get birds that are not sold yet
+  });
+  res.status(200).json(birds);
+});
+
+// @desc    Get all birds that are not sold yet
+// @route   GET /api/birds/available
+// @access  Private
+const getBirdsNotSold = asyncHandler(async (req, res) => {
+  const birds = await Bird.find({ 
+    user: req.user.id,
+    sold: false // Only get birds that are not sold yet
+  });
+  res.status(200).json(birds);
+});
+
+// @desc    Mark a bird for sale
+// @route   PUT /api/birds/:id/mark-for-sale
+// @access  Private
+const markBirdForSale = asyncHandler(async (req, res) => {
+  const bird = await Bird.findById(req.params.id);
+
+  if (!bird) {
+    res.status(404);
+    throw new Error('Bird not found');
+  }
+
+  // Check if bird is already sold
+  if (bird.sold) {
+    res.status(400);
+    throw new Error('Cannot mark a sold bird for sale');
+  }
+
+  // Prepare update data
+  const updateData = {
+    forSale: true
+  };
+
+  // If askingPrice is provided, add it to the update data
+  if (req.body.askingPrice !== undefined) {
+    updateData.askingPrice = req.body.askingPrice;
+  }
+
+  // Update the bird's forSale status and askingPrice if provided
+  const updatedBird = await Bird.findByIdAndUpdate(
+    req.params.id,
+    updateData,
+    { new: true }
+  );
+
+  res.status(200).json(updatedBird);
+});
+
 module.exports = {
   getBirds,
   createBird,
   updateBird,
   deleteBird,
   sellBird,
-  getSelledBirds
+  getSelledBirds,
+  getBirdsForSale,
+  getBirdsNotSold,
+  markBirdForSale
 }; 

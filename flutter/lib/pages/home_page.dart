@@ -1,4 +1,5 @@
 // lib/pages/home_page.dart
+import 'package:app_volailles/utils/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:app_volailles/models/bird.dart';
 import 'package:app_volailles/pages/add_bird.dart';
@@ -17,6 +18,7 @@ import 'package:app_volailles/services/auth_service.dart';
 import 'package:app_volailles/services/bird_service.dart';
 import 'package:app_volailles/pages/auth/login_page.dart';
 import 'package:app_volailles/services/bird_sync_service.dart';
+import 'package:app_volailles/widgets/app_drawer.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -93,9 +95,9 @@ class _HomePageState extends State<HomePage> {
 
       if (!mounted) return;
 
-      final syncedBirds = futures[0] as List<Bird>;
-      final conflicts = futures[1] as List<Bird>;
-      final soldBirds = futures[2] as List<Bird>;
+      final syncedBirds = futures[0];
+      final conflicts = futures[1];
+      final soldBirds = futures[2];
 
       if (conflicts.isNotEmpty) {
         await _birdSyncService.resolveConflicts(conflicts);
@@ -104,7 +106,8 @@ class _HomePageState extends State<HomePage> {
       // Update the UI with the new data
       if (mounted) {
         setState(() {
-          _birds = syncedBirds.where((bird) => !bird.sold && !bird.forSale).toList();
+          _birds =
+              syncedBirds.where((bird) => !bird.sold && !bird.forSale).toList();
           _soldBirds = soldBirds.where((bird) => bird.sold).toList();
           _isLoading = false;
         });
@@ -373,6 +376,7 @@ class _HomePageState extends State<HomePage> {
       builder:
           (dialogContext) => MarkForSaleDialog(
             bird: bird,
+            dialogContext: dialogContext,
             onSuccess: (double askingPrice) {
               _markBirdForSale(bird, askingPrice);
             },
@@ -505,7 +509,7 @@ class _HomePageState extends State<HomePage> {
     if (title == 'Oiseaux') {
       try {
         setState(() => _isLoading = true);
-        final birds = await _birdService.getBirds();
+        final birds = await _birdService.getAvailableBirds();
         if (mounted) {
           setState(() {
             _birds = birds;
@@ -584,7 +588,7 @@ class _HomePageState extends State<HomePage> {
           );
         }
       }
-    } else if (title == 'achats') {
+    } else if (title == 'Achats') {
       if (!mounted) return;
       Navigator.push(
         currentContext,
@@ -596,7 +600,7 @@ class _HomePageState extends State<HomePage> {
     } else if (title == 'Vendues') {
       try {
         setState(() => _isLoading = true);
-        final soldBirds = await BirdService().getSoldBirdsWithBuyers();
+        final soldBirds = await BirdService().getSoldBirds();
         if (!mounted) return;
 
         setState(() {
@@ -656,77 +660,12 @@ class _HomePageState extends State<HomePage> {
 
   // Déterminer la couleur de fond de la carte d'oiseau en fonction du sexe
   Color _getBirdColor(Bird bird) {
-    if (bird.gender.toLowerCase() == 'male') {
+    if (bird.gender.toLowerCase() == Constants.male) {
       return Colors.blue.shade100;
-    } else if (bird.gender.toLowerCase() == 'female') {
+    } else if (bird.gender.toLowerCase() == Constants.female) {
       return Colors.pink.shade100;
     }
     return Colors.white;
-  }
-
-  Widget _buildDrawerItem(IconData icon, String title, {String? trailing}) {
-    return ListTile(
-      leading: Icon(icon, color: Colors.deepPurple),
-      title: Text(title, style: const TextStyle(fontWeight: FontWeight.w500)),
-      trailing:
-          trailing != null
-              ? Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                decoration: BoxDecoration(
-                  color: Colors.deepPurple.shade100,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Text(
-                  trailing,
-                  style: const TextStyle(
-                    color: Colors.deepPurple,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              )
-              : null,
-      onTap: () => onDrawerItemClicked(title),
-    );
-  }
-
-  Widget _buildDrawerHeader() {
-    return DrawerHeader(
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [Colors.deepPurple.shade700, Colors.deepPurple.shade400],
-        ),
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Icon(Icons.flutter_dash, size: 40, color: Colors.white),
-
-          const Text(
-            'Menu',
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          if (_currentUser != null) ...[
-            Text(
-              _currentUser!['fullName'] ?? 'Utilisateur',
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 16,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-            Text(
-              _currentUser!['email'] ?? '',
-              style: const TextStyle(color: Colors.white70, fontSize: 14),
-            ),
-          ],
-        ],
-      ),
-    );
   }
 
   @override
@@ -781,36 +720,10 @@ class _HomePageState extends State<HomePage> {
           ),
         ],
       ),
-      drawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: [
-            _buildDrawerHeader(),
-            _buildDrawerItem(Icons.pets, 'Oiseaux'),
-            _buildDrawerItem(Icons.favorite, 'Paires'),
-            _buildDrawerItem(
-              Icons.sell,
-              'Vendues',
-              trailing:
-                  _soldBirds.isNotEmpty ? _soldBirds.length.toString() : null,
-            ),
-            _buildDrawerItem(Icons.shopping_cart, 'Achats'),
-            _buildDrawerItem(Icons.store, 'Oiseaux à vendre'),
-            _buildDrawerItem(Icons.bar_chart, 'Statistiques'),
-            _buildDrawerItem(Icons.cabin_sharp, 'Nid'),
-            _buildDrawerItem(Icons.device_hub, 'Espèces'),
-            const Divider(),
-            _buildDrawerItem(Icons.ring_volume, 'Ring pending'),
-            _buildDrawerItem(Icons.egg, 'Incubation', trailing: 'auto'),
-            const Divider(),
-            _buildDrawerItem(Icons.money_off, 'Budget'),
-            _buildDrawerItem(Icons.account_balance_wallet, 'Balance'),
-            _buildDrawerItem(Icons.category, 'Paramètres'),
-            const Divider(),
-            _buildDrawerItem(Icons.settings, 'À propos'),
-            _buildDrawerItem(Icons.logout, 'Déconnexion'),
-          ],
-        ),
+      drawer: AppDrawer(
+        currentUser: _currentUser,
+        soldBirds: _soldBirds,
+        onDrawerItemClicked: onDrawerItemClicked,
       ),
       body:
           _isLoading

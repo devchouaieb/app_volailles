@@ -1,3 +1,4 @@
+import 'package:app_volailles/utils/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:app_volailles/models/bird.dart';
 
@@ -15,7 +16,7 @@ class _AddBirdPageState extends State<AddBirdPage> {
   final _formKey = GlobalKey<FormState>();
 
   String _identifier = '';
-  String _gender = 'Male';
+  String _gender = Constants.male;
   String? _selectedSpecies;
   String _selectedVariety = '';
   String? _selectedStatus;
@@ -132,7 +133,7 @@ class _AddBirdPageState extends State<AddBirdPage> {
                 Expanded(
                   child: RadioListTile<String>(
                     title: const Text("Male"),
-                    value: "Male",
+                    value: Constants.male,
                     groupValue: _gender,
                     onChanged: (value) => setState(() => _gender = value!),
                   ),
@@ -140,7 +141,7 @@ class _AddBirdPageState extends State<AddBirdPage> {
                 Expanded(
                   child: RadioListTile<String>(
                     title: const Text("Female"),
-                    value: "Female",
+                    value: Constants.female,
                     groupValue: _gender,
                     onChanged: (value) => setState(() => _gender = value!),
                   ),
@@ -187,12 +188,14 @@ class _AddBirdPageState extends State<AddBirdPage> {
               onSaved: (value) => _cage = value ?? '',
             ),
             const SizedBox(height: 16),
-            TextFormField(
-              initialValue: _price.toString(),
-              decoration: const InputDecoration(labelText: 'Prix (DT)'),
-              keyboardType: TextInputType.number,
-              onSaved: (value) => _price = double.tryParse(value ?? '0') ?? 0.0,
-            ),
+            if (widget.bird != null)
+              TextFormField(
+                initialValue: _price.toString(),
+                decoration: const InputDecoration(labelText: 'Prix (DT)'),
+                keyboardType: TextInputType.number,
+                onSaved:
+                    (value) => _price = double.tryParse(value ?? '0') ?? 0.0,
+              ),
             const SizedBox(height: 16),
             const Text("Date de naissance *"),
             const SizedBox(height: 8),

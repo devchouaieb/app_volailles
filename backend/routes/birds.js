@@ -7,7 +7,10 @@ const {
   updateBird,
   deleteBird,
   sellBird,
-  getSelledBirds
+  getSelledBirds,
+  getBirdsForSale,
+  getBirdsNotSold,
+  markBirdForSale
 } = require('../controllers/birdController');
 
 // All routes are protected and require authentication
@@ -25,7 +28,16 @@ router.route('/:id')
 // Route pour vendre un oiseau
 router.put('/:id/sell', sellBird);
 
+// Route pour marquer un oiseau en vente
+router.put('/:id/mark-for-sale', markBirdForSale);
+
 // Route pour obtenir les oiseaux vendus
 router.get('/sold', getSelledBirds);
+
+// Route pour obtenir les oiseaux en vente
+router.get('/for-sale', getBirdsForSale);
+
+// Route pour obtenir les oiseaux disponibles (non vendus)
+router.get('/available', getBirdsNotSold);
 
 module.exports = router; 

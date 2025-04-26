@@ -102,7 +102,7 @@ class BirdTransferService {
   Future<List<Bird>> getBirdsForSale() async {
     try {
       print('🔄 Getting birds for sale...');
-      final response = await _apiService.get('birds/sold/with-buyers');
+      final response = await _apiService.get('birds/for-sale');
 
       if (response is List) {
         final birds = response.map((json) => Bird.fromApi(json)).toList();
