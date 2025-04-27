@@ -17,6 +17,7 @@ class _AddPairDialogState extends State<AddPairDialog> {
   Bird? _selectedFemale;
   String _status = 'active';
   String _notes = '';
+  String _cageNumber = '';
   final _formKey = GlobalKey<FormState>();
 
   late List<Bird> _males;
@@ -45,6 +46,27 @@ class _AddPairDialogState extends State<AddPairDialog> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
+              // Cage Number
+              TextFormField(
+                decoration: const InputDecoration(
+                  labelText: 'Numéro de cage',
+                  border: OutlineInputBorder(),
+                  prefixIcon: Icon(Icons.home),
+                ),
+                onChanged: (value) {
+                  setState(() {
+                    _cageNumber = value;
+                  });
+                },
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Veuillez entrer le numéro de cage';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 16),
+
               // Male Selection
               DropdownButtonFormField<Bird>(
                 decoration: const InputDecoration(
@@ -136,6 +158,7 @@ class _AddPairDialogState extends State<AddPairDialog> {
                 species: _selectedMale!.species,
                 status: _status,
                 notes: _notes,
+                cageNumber: _cageNumber,
               );
               Navigator.pop(context, pair);
             }

@@ -19,6 +19,9 @@ import 'package:app_volailles/services/bird_service.dart';
 import 'package:app_volailles/pages/auth/login_page.dart';
 import 'package:app_volailles/services/bird_sync_service.dart';
 import 'package:app_volailles/widgets/app_drawer.dart';
+import 'package:app_volailles/pages/birds_page.dart';
+import 'package:app_volailles/pages/associations_page.dart';
+import 'package:app_volailles/pages/reseau_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -506,39 +509,19 @@ class _HomePageState extends State<HomePage> {
     final currentContext = context;
     Navigator.pop(currentContext);
 
-    if (title == 'Oiseaux') {
-      try {
-        setState(() => _isLoading = true);
-        final birds = await _birdService.getAvailableBirds();
-        if (mounted) {
-          setState(() {
-            _birds = birds;
-            _isLoading = false;
-          });
-        }
-      } catch (e) {
-        if (mounted) {
-          setState(() => _isLoading = false);
-          ScaffoldMessenger.of(currentContext).showSnackBar(
-            SnackBar(
-              content: Text('Erreur lors du chargement des oiseaux: $e'),
-              backgroundColor: Colors.red,
-              duration: const Duration(seconds: 5),
-              action: SnackBarAction(
-                label: 'Réessayer',
-                onPressed: () => onDrawerItemClicked('Oiseaux'),
-              ),
-            ),
-          );
-        }
-      }
+    if (title == 'Tous les oiseaux') {
+      if (!mounted) return;
+      Navigator.push(
+        currentContext,
+        MaterialPageRoute(builder: (_) => const BirdsPage()),
+      );
     } else if (title == 'Statistiques') {
       if (!mounted) return;
       Navigator.push(
         currentContext,
         MaterialPageRoute(builder: (_) => StatisticsPage(birds: _birds)),
       );
-    } else if (title == 'Paires') {
+    } else if (title == 'Cages') {
       if (!mounted) return;
       Navigator.push(
         currentContext,
@@ -549,6 +532,12 @@ class _HomePageState extends State<HomePage> {
       Navigator.push(
         currentContext,
         MaterialPageRoute(builder: (_) => const NidPage()),
+      );
+    } else if (title == 'Réseaux') {
+      if (!mounted) return;
+      Navigator.push(
+        currentContext,
+        MaterialPageRoute(builder: (_) => const ReseauPage()),
       );
     } else if (title == 'vendues') {
       try {
@@ -646,6 +635,12 @@ class _HomePageState extends State<HomePage> {
       Navigator.push(
         currentContext,
         MaterialPageRoute(builder: (_) => SpeciesPage()),
+      );
+    } else if (title == 'Associations') {
+      if (!mounted) return;
+      Navigator.push(
+        currentContext,
+        MaterialPageRoute(builder: (_) => const AssociationsPage()),
       );
     } else if (title == 'Déconnexion') {
       await _authService.logout();

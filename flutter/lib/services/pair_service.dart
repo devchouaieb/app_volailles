@@ -27,6 +27,7 @@ class PairService {
                   male: Bird.fromApi(male),
                   female: Bird.fromApi(female),
                   species: species,
+                  cageNumber: "",
                 ),
               );
             }

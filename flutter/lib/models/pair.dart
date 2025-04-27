@@ -8,6 +8,7 @@ class Pair {
   final String? createdAt;
   final String? status;
   final String? notes;
+  final String cageNumber;
 
   Pair({
     this.id,
@@ -17,6 +18,7 @@ class Pair {
     this.createdAt,
     this.status,
     this.notes,
+    required this.cageNumber,
   });
 
   factory Pair.fromJson(Map<String, dynamic> json) {
@@ -28,6 +30,7 @@ class Pair {
       createdAt: json['createdAt'],
       status: json['status'] ?? 'active',
       notes: json['notes'],
+      cageNumber: json['cageNumber'] ?? '',
     );
   }
 
@@ -40,6 +43,7 @@ class Pair {
       'createdAt': createdAt,
       'status': status,
       'notes': notes,
+      'cageNumber': cageNumber,
     };
   }
 }

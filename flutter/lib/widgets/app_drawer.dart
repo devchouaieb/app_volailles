@@ -85,8 +85,9 @@ class AppDrawer extends StatelessWidget {
         padding: EdgeInsets.zero,
         children: [
           _buildDrawerHeader(),
-          _buildDrawerItem(Icons.pets, 'Oiseaux'),
-          _buildDrawerItem(Icons.favorite, 'Paires'),
+          _buildDrawerItem(Icons.home, "Accueil"),
+          _buildDrawerItem(Icons.pets, 'Tous les oiseaux'),
+          _buildDrawerItem(Icons.favorite, 'Cages'),
           _buildDrawerItem(
             Icons.sell,
             'Vendues',
@@ -97,6 +98,9 @@ class AppDrawer extends StatelessWidget {
           _buildDrawerItem(Icons.bar_chart, 'Statistiques'),
           _buildDrawerItem(Icons.cabin_sharp, 'Nid'),
           _buildDrawerItem(Icons.device_hub, 'Espèces'),
+          const Divider(),
+          _buildDrawerItem(Icons.group, 'Associations'),
+          _buildDrawerItem(Icons.account_tree, 'Réseaux'),
           const Divider(),
           _buildDrawerItem(Icons.ring_volume, 'Ring pending'),
           _buildDrawerItem(Icons.egg, 'Incubation', trailing: 'auto'),
