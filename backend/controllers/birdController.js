@@ -84,8 +84,13 @@ const sellBird = asyncHandler(async (req, res) => {
   }
 
   const { price, buyerInfo } = req.body;
+  const buyer = await User.findOne({ nationalId: buyerInfo.nationalId });
+  if (!buyer) {
+    res.status(404);
+    throw new Error('Puyer not found');
+  }
 
-  if (!price || !buyerInfo || !buyerInfo.nationalId || !buyerInfo.fullName) {
+  if (!buyerInfo || !buyerInfo.nationalId || !buyerInfo.fullName) {
     res.status(400);
     throw new Error('Price and buyer information (nationalId, fullName) are required');
   }

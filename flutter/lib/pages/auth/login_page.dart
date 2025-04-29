@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:app_volailles/pages/auth/register_page.dart';
+import 'package:app_volailles/pages/auth/forgot_password_page.dart';
 import 'package:app_volailles/pages/home_page.dart';
 import 'package:app_volailles/services/auth_service.dart';
 
@@ -223,7 +224,12 @@ class _LoginPageState extends State<LoginPage> {
                     alignment: Alignment.centerRight,
                     child: TextButton(
                       onPressed: () {
-                        // TODO: Implement password recovery
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const ForgotPasswordPage(),
+                          ),
+                        );
                       },
                       child: const Text(
                         "Mot de passe oublié?",

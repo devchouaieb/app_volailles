@@ -5,12 +5,12 @@ import 'package:app_volailles/utils/date_utils.dart';
 
 class PurchasesPage extends StatefulWidget {
   final List<Bird> birds;
-  final Function(Bird) onAddBird;
+  final Function(Bird)? onAddBird;
 
   const PurchasesPage({
     super.key,
-    required this.birds,
-    required this.onAddBird,
+    this.birds = const [],
+    this.onAddBird,
   });
 
   @override
@@ -87,7 +87,7 @@ class _PurchasesPageState extends State<PurchasesPage> {
       final createdBird = await _birdService.createBird(bird);
 
       if (createdBird != null) {
-        widget.onAddBird(createdBird);
+        widget.onAddBird?.call(createdBird);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(

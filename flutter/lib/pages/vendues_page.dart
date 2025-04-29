@@ -8,15 +8,15 @@ class VenduesPage extends StatelessWidget {
 
   const VenduesPage({
     Key? key,
-    required this.birds,
-    required this.soldBirds,
-    required Future<void> Function(
+    this.birds = const [],
+    this.soldBirds = const [],
+     Future<void> Function(
       Bird bird,
       double price,
       String buyerNationalId,
       String buyerFullName, {
       String? buyerPhone,
-    })
+    })?
     onSellBird,
   }) : super(key: key);
 

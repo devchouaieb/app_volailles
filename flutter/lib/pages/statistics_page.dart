@@ -6,7 +6,7 @@ import 'package:app_volailles/models/bird.dart';
 class StatisticsPage extends StatelessWidget {
   final List<Bird> birds;
 
-  const StatisticsPage({super.key, required this.birds});
+  const StatisticsPage({super.key,  this.birds = const []});
 
   @override
   Widget build(BuildContext context) {

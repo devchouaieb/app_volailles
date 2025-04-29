@@ -8,7 +8,7 @@ import 'package:app_volailles/services/pair_service.dart';
 class PairsPage extends StatefulWidget {
   final List<Bird> birds;
 
-  const PairsPage({super.key, required this.birds});
+  const PairsPage({super.key,  this.birds = const []});
 
   @override
   State<PairsPage> createState() => _PairsPageState();

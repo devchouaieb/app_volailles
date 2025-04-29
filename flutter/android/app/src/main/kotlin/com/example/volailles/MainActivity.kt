@@ -1,4 +1,4 @@
-package com.example.app_volailles
+package com.example.volailles
 
 import io.flutter.embedding.android.FlutterActivity
 

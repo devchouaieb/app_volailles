@@ -1,4 +1,5 @@
 // lib/main.dart
+import 'package:app_links/app_links.dart';
 import 'package:flutter/material.dart';
 import 'package:app_volailles/routes/app_routes.dart';
 
@@ -36,6 +37,14 @@ class MyApp extends StatelessWidget {
       ),
       home: const InitialRoute(),
       debugShowCheckedModeBanner: false,
+      onGenerateRoute: (settings) {
+        final routes = AppRoutes.getRoutes();
+        final builder = routes[settings.name];
+        if (builder != null) {
+          return MaterialPageRoute(builder: builder, settings: settings);
+        }
+        return null;
+      },
     );
   }
 }
@@ -54,6 +63,27 @@ class _InitialRouteState extends State<InitialRoute> {
   void initState() {
     super.initState();
     _initialRouteFuture = _getInitialRoute();
+    _initUniLinks();
+  }
+
+  void _initUniLinks() {
+    AppLinks().uriLinkStream.listen((Uri? uri) {
+      if (uri != null) {
+        _handleDeepLink(uri);
+      }
+    });
+  }
+
+  void _handleDeepLink(Uri uri) {
+    print("Uri : $uri");
+    if (uri.host == 'reset-password') {
+      final token = uri.queryParameters['resettoken'];
+      if (token != null) {
+        Navigator.of(
+          context,
+        ).pushNamed(AppRoutes.resetPassword, arguments: {'resettoken': token});
+      }
+    }
   }
 
   Future<String> _getInitialRoute() async {

@@ -197,4 +197,55 @@ class AuthService {
       rethrow;
     }
   }
+
+  // Forgot Password
+  Future<bool> forgotPassword(String email) async {
+    try {
+      final response = await http
+          .post(
+            Uri.parse('$baseUrl/auth/forgotpassword'),
+            headers: {'Content-Type': 'application/json'},
+            body: jsonEncode({'email': email}),
+          )
+          .timeout(const Duration(seconds: 5));
+
+      if (response.statusCode == 200) {
+        return true;
+      } else {
+        final data = jsonDecode(response.body);
+        throw Exception(
+          data['message'] ?? 'Erreur lors de la demande de réinitialisation',
+        );
+      }
+    } catch (e) {
+      print('Erreur forgot password: $e');
+      rethrow;
+    }
+  }
+
+  // Reset Password
+  Future<bool> resetPassword(String token, String newPassword) async {
+    try {
+      final response = await http
+          .put(
+            Uri.parse('$baseUrl/auth/resetpassword/$token'),
+            headers: {'Content-Type': 'application/json'},
+            body: jsonEncode({'password': newPassword}),
+          )
+          .timeout(const Duration(seconds: 5));
+
+      if (response.statusCode == 200) {
+        return true;
+      } else {
+        final data = jsonDecode(response.body);
+        throw Exception(
+          data['message'] ??
+              'Erreur lors de la réinitialisation du mot de passe',
+        );
+      }
+    } catch (e) {
+      print('Erreur reset password: $e');
+      rethrow;
+    }
+  }
 }
