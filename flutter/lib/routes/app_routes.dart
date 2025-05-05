@@ -7,8 +7,8 @@ import 'package:app_volailles/pages/auth/reset_password_page.dart';
 import 'package:app_volailles/pages/home_page.dart';
 import 'package:app_volailles/pages/species_page.dart';
 import 'package:app_volailles/pages/statistics_page.dart';
-import 'package:app_volailles/pages/pairs_page.dart';
-import 'package:app_volailles/pages/nid_page.dart';
+import 'package:app_volailles/pages/cages_page.dart';
+import 'package:app_volailles/pages/nest_page.dart';
 import 'package:app_volailles/pages/vendues_page.dart';
 import 'package:app_volailles/pages/purchases_page.dart';
 import 'package:app_volailles/services/auth_service.dart';
@@ -20,8 +20,8 @@ class AppRoutes {
   static const String resetPassword = '/reset-password';
   static const String species = '/species';
   static const String statistics = '/statistics';
-  static const String pairs = '/pairs';
-  static const String nid = '/nid';
+  static const String cages = '/cages';
+  static const String nest = '/nest';
   static const String vendues = '/vendues';
   static const String purchases = '/purchases';
 
@@ -39,12 +39,12 @@ class AppRoutes {
         }
         return ResetPasswordPage(token: token);
       },
-      species: (context) =>  SpeciesPage(),
-      statistics: (context) =>  StatisticsPage(),
-      pairs: (context) => const PairsPage(),
-      nid: (context) => const NidPage(),
-      vendues: (context) =>  VenduesPage(),
-      purchases: (context) =>  PurchasesPage(),
+      species: (context) => SpeciesPage(),
+      statistics: (context) => StatisticsPage(),
+      cages: (context) => const CagesPage(),
+      nest: (context) => const NestPage(),
+      vendues: (context) => VenduesPage(),
+      purchases: (context) => PurchasesPage(),
     };
   }
 

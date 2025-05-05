@@ -1,10 +1,11 @@
 // lib/pages/home_page.dart
+import 'package:app_volailles/pages/nest_page.dart';
 import 'package:app_volailles/utils/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:app_volailles/models/bird.dart';
 import 'package:app_volailles/pages/add_bird.dart';
 import 'package:app_volailles/pages/statistics_page.dart';
-import 'package:app_volailles/pages/pairs_page.dart';
+import 'package:app_volailles/pages/cages_page.dart';
 import 'package:app_volailles/pages/nid_page.dart';
 import 'package:app_volailles/pages/vendues_page.dart';
 import 'package:app_volailles/pages/purchases_page.dart';
@@ -372,6 +373,9 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+
+
+
   // Afficher le dialogue pour mettre un oiseau en vente
   void _showMarkForSaleDialog(Bird bird) {
     showDialog<void>(
@@ -386,6 +390,7 @@ class _HomePageState extends State<HomePage> {
           ),
     );
   }
+   
 
   // Marquer un oiseau comme étant à vendre
   Future<void> _markBirdForSale(Bird bird, double askingPrice) async {
@@ -525,13 +530,13 @@ class _HomePageState extends State<HomePage> {
       if (!mounted) return;
       Navigator.push(
         currentContext,
-        MaterialPageRoute(builder: (_) => PairsPage(birds: _birds)),
+        MaterialPageRoute(builder: (_) => CagesPage(birds: _birds)),
       );
-    } else if (title == 'Nid') {
+    } else if (title == 'Couvés') {
       if (!mounted) return;
       Navigator.push(
         currentContext,
-        MaterialPageRoute(builder: (_) => const NidPage()),
+        MaterialPageRoute(builder: (_) => const NestPage()),
       );
     } else if (title == 'Réseaux') {
       if (!mounted) return;
@@ -922,7 +927,7 @@ class _HomePageState extends State<HomePage> {
                                           color: Colors.deepPurple,
                                         ),
                                         onPressed:
-                                            () => _showSellBirdDialog(bird),
+                                            () => _showMarkForSaleDialog(bird),
                                         tooltip: 'Vendre',
                                       ),
                                       IconButton(

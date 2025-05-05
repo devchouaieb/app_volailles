@@ -39,6 +39,7 @@ class Bird {
   // Conversion pour l'API
   Map<String, dynamic> toJson() {
     return {
+      "_id": id ??"",
       'identifier': identifier,
       'gender': gender,
       'species': species,

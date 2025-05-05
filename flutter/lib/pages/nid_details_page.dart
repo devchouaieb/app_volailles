@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
-import '../models/nid.dart';
+
 
 class NidDetailsPage extends StatelessWidget {
-  final Nid nid;
+  
 
-  const NidDetailsPage({super.key, required this.nid});
+  const NidDetailsPage({super.key,});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Détails de ${nid.name}")),
+      appBar: AppBar(title: Text("Détails de ")),
       body: Padding(
         padding: const EdgeInsets.all(24),
         child: Column(

@@ -1,6 +1,6 @@
 import 'package:app_volailles/models/bird.dart';
 
-class Pair {
+class Cage {
   final String? id;
   final Bird male;
   final Bird female;
@@ -10,7 +10,7 @@ class Pair {
   final String? notes;
   final String cageNumber;
 
-  Pair({
+  Cage({
     this.id,
     required this.male,
     required this.female,
@@ -21,8 +21,8 @@ class Pair {
     required this.cageNumber,
   });
 
-  factory Pair.fromJson(Map<String, dynamic> json) {
-    return Pair(
+  factory Cage.fromJson(Map<String, dynamic> json) {
+    return Cage(
       id: json['_id'],
       male: Bird.fromApi(json['male']),
       female: Bird.fromApi(json['female']),

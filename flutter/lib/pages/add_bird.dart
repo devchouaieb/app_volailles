@@ -5,8 +5,9 @@ import 'package:app_volailles/models/bird.dart';
 class AddBirdPage extends StatefulWidget {
   final Function(Bird) onSave;
   final Bird? bird;
+  final String? cage;
 
-  const AddBirdPage({super.key, required this.onSave, this.bird});
+  const AddBirdPage({super.key, required this.onSave, this.bird, this.cage});
 
   @override
   State<AddBirdPage> createState() => _AddBirdPageState();
@@ -37,6 +38,10 @@ class _AddBirdPageState extends State<AddBirdPage> {
       _cage = b.cage;
       _birthDate = DateTime.tryParse(b.birthDate);
       _price = b.price;
+    } else {
+      if (widget.cage != null) {
+        _cage = widget.cage!;
+      }
     }
   }
 

@@ -7,7 +7,8 @@ const cors = require('cors');
 const connectDB = require('./config/db');
 const authRoutes = require('./routes/auth');
 const birdRoutes = require('./routes/birds');
-const pairsRoutes = require('./routes/pairsRoutes');
+const cagesRoutes = require('./routes/cagesRoutes');
+const nestsRoutes = require('./routes/nestsRoutes');
 const reseauRoutes = require('./routes/reseauRoutes');
 const associationRoutes = require('./routes/associationRoutes');
 
@@ -33,7 +34,8 @@ app.use(cors({
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/birds', birdRoutes);
-app.use('/api/pairs', pairsRoutes);
+app.use('/api/cages', cagesRoutes);
+app.use('/api/nests', nestsRoutes);
 app.use('/api/reseaux', reseauRoutes);
 app.use('/api/associations', associationRoutes);
 

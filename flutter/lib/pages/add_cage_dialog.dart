@@ -1,18 +1,18 @@
-import 'package:app_volailles/utils/constants.dart';
 import 'package:flutter/material.dart';
+import 'package:app_volailles/models/cage.dart';
 import 'package:app_volailles/models/bird.dart';
-import 'package:app_volailles/models/pair.dart';
+import 'package:app_volailles/utils/constants.dart';
 
-class AddPairDialog extends StatefulWidget {
+class AddCageDialog extends StatefulWidget {
   final List<Bird> birds;
 
-  const AddPairDialog({super.key, required this.birds});
+  const AddCageDialog({super.key, required this.birds});
 
   @override
-  State<AddPairDialog> createState() => _AddPairDialogState();
+  State<AddCageDialog> createState() => _AddCageDialogState();
 }
 
-class _AddPairDialogState extends State<AddPairDialog> {
+class _AddCageDialogState extends State<AddCageDialog> {
   Bird? _selectedMale;
   Bird? _selectedFemale;
   String _status = 'active';
@@ -39,7 +39,7 @@ class _AddPairDialogState extends State<AddPairDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text("Créer une nouvelle paire"),
+      title: const Text('Créer une cage'),
       content: SingleChildScrollView(
         child: Form(
           key: _formKey,
@@ -152,15 +152,26 @@ class _AddPairDialogState extends State<AddPairDialog> {
         ElevatedButton(
           onPressed: () {
             if (_formKey.currentState!.validate()) {
-              final pair = Pair(
+              if (_selectedMale!.species != _selectedFemale!.species) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Les oiseaux doivent être de la même espèce'),
+                    backgroundColor: Colors.red,
+                  ),
+                );
+                return;
+              }
+
+              final cage = Cage(
                 male: _selectedMale!,
                 female: _selectedFemale!,
                 species: _selectedMale!.species,
+                cageNumber: _cageNumber,
                 status: _status,
                 notes: _notes,
-                cageNumber: _cageNumber,
               );
-              Navigator.pop(context, pair);
+
+              Navigator.pop(context, cage);
             }
           },
           child: const Text('Créer'),

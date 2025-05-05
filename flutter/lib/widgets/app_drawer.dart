@@ -88,6 +88,7 @@ class AppDrawer extends StatelessWidget {
           _buildDrawerItem(Icons.home, "Accueil"),
           _buildDrawerItem(Icons.pets, 'Tous les oiseaux'),
           _buildDrawerItem(Icons.favorite, 'Cages'),
+          _buildDrawerItem(Icons.egg, 'Couvés'),
           _buildDrawerItem(
             Icons.sell,
             'Vendues',
@@ -96,7 +97,6 @@ class AppDrawer extends StatelessWidget {
           _buildDrawerItem(Icons.shopping_cart, 'Achats'),
           _buildDrawerItem(Icons.store, 'Oiseaux à vendre'),
           _buildDrawerItem(Icons.bar_chart, 'Statistiques'),
-          _buildDrawerItem(Icons.cabin_sharp, 'Nid'),
           _buildDrawerItem(Icons.device_hub, 'Espèces'),
           const Divider(),
           _buildDrawerItem(Icons.group, 'Associations'),

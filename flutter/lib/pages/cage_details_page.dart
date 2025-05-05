@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:app_volailles/models/pair.dart';
+import 'package:app_volailles/models/cage.dart';
 import 'package:app_volailles/models/bird.dart';
-import 'package:app_volailles/services/pair_service.dart';
+import 'package:app_volailles/services/cage_service.dart';
 
-class PairDetailsPage extends StatelessWidget {
-  final Pair pair;
+class CageDetailsPage extends StatelessWidget {
+  final Cage cage;
 
-  const PairDetailsPage({super.key, required this.pair});
+  const CageDetailsPage({super.key, required this.cage});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Détails de la paire'),
+        title: const Text('Détails de la cage'),
         backgroundColor: Colors.deepPurple,
         foregroundColor: Colors.white,
       ),
@@ -37,7 +37,7 @@ class PairDetailsPage extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 8),
-                    _buildBirdInfo(pair.male),
+                    _buildBirdInfo(cage.male),
                   ],
                 ),
               ),
@@ -60,14 +60,14 @@ class PairDetailsPage extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 8),
-                    _buildBirdInfo(pair.female),
+                    _buildBirdInfo(cage.female),
                   ],
                 ),
               ),
             ),
             const SizedBox(height: 16),
 
-            // Pair Information
+            // Cage Information
             Card(
               child: Padding(
                 padding: const EdgeInsets.all(16),
@@ -75,18 +75,18 @@ class PairDetailsPage extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const Text(
-                      'Informations de la paire',
+                      'Informations de la cage',
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                     const SizedBox(height: 8),
-                    if (pair.createdAt != null)
-                      _buildInfoRow('Date de création', pair.createdAt!),
-                    _buildInfoRow('Statut', pair.status ?? 'active'),
-                    if (pair.notes != null && pair.notes!.isNotEmpty)
-                      _buildInfoRow('Notes', pair.notes!),
+                    if (cage.createdAt != null)
+                      _buildInfoRow('Date de création', cage.createdAt!),
+                    _buildInfoRow('Statut', cage.status ?? 'active'),
+                    if (cage.notes != null && cage.notes!.isNotEmpty)
+                      _buildInfoRow('Notes', cage.notes!),
                   ],
                 ),
               ),

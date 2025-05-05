@@ -1,32 +1,32 @@
 import 'package:flutter/material.dart';
-import 'package:app_volailles/models/pair.dart';
+import 'package:app_volailles/models/cage.dart';
 import 'package:app_volailles/models/bird.dart';
-import 'package:app_volailles/pages/add_pair_dialog.dart';
-import 'package:app_volailles/pages/pair_details_page.dart';
-import 'package:app_volailles/services/pair_service.dart';
+import 'package:app_volailles/pages/add_cage_dialog.dart';
+import 'package:app_volailles/pages/cage_details_page.dart';
+import 'package:app_volailles/services/cage_service.dart';
 
-class PairsPage extends StatefulWidget {
+class CagesPage extends StatefulWidget {
   final List<Bird> birds;
 
-  const PairsPage({super.key,  this.birds = const []});
+  const CagesPage({super.key, this.birds = const []});
 
   @override
-  State<PairsPage> createState() => _PairsPageState();
+  State<CagesPage> createState() => _CagesPageState();
 }
 
-class _PairsPageState extends State<PairsPage> {
-  final _pairService = PairService();
-  List<Pair> _pairs = [];
+class _CagesPageState extends State<CagesPage> {
+  final _cageService = CageService();
+  List<Cage> _cages = [];
   bool _isLoading = true;
   String? _errorMessage;
 
   @override
   void initState() {
     super.initState();
-    _loadPairs();
+    _loadCages();
   }
 
-  Future<void> _loadPairs() async {
+  Future<void> _loadCages() async {
     if (!mounted) return;
 
     setState(() {
@@ -35,11 +35,11 @@ class _PairsPageState extends State<PairsPage> {
     });
 
     try {
-      final pairs = await _pairService.getPairs();
+      final cages = await _cageService.getCages();
       if (!mounted) return;
 
       setState(() {
-        _pairs = pairs;
+        _cages = cages;
         _isLoading = false;
       });
     } catch (e) {
@@ -51,7 +51,7 @@ class _PairsPageState extends State<PairsPage> {
     }
   }
 
-  Future<void> _addPair(Pair pair) async {
+  Future<void> _addCage(Cage cage) async {
     if (!mounted) return;
 
     setState(() {
@@ -60,18 +60,18 @@ class _PairsPageState extends State<PairsPage> {
     });
 
     try {
-      final newPair = await _pairService.createPair(pair);
+      final newCage = await _cageService.createCage(cage);
       if (!mounted) return;
 
       setState(() {
-        _pairs.add(newPair);
+        _cages.add(newCage);
         _isLoading = false;
       });
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('Paire ajoutée avec succès'),
+            content: Text('Cage ajoutée avec succès'),
             backgroundColor: Colors.green,
           ),
         );
@@ -94,16 +94,16 @@ class _PairsPageState extends State<PairsPage> {
     }
   }
 
-  Future<void> _deletePair(Pair pair) async {
+  Future<void> _deleteCage(Cage cage) async {
     if (!mounted) return;
 
     final confirmed = await showDialog<bool>(
       context: context,
       builder:
           (context) => AlertDialog(
-            title: const Text("Supprimer la paire ?"),
+            title: const Text("Supprimer la cage ?"),
             content: const Text(
-              "Êtes-vous sûr de vouloir supprimer cette paire ?",
+              "Êtes-vous sûr de vouloir supprimer cette cage ?",
             ),
             actions: [
               TextButton(
@@ -127,18 +127,18 @@ class _PairsPageState extends State<PairsPage> {
     });
 
     try {
-      await _pairService.deletePair(pair.id!);
+      await _cageService.deleteCage(cage.id!);
       if (!mounted) return;
 
       setState(() {
-        _pairs.removeWhere((p) => p.id == pair.id);
+        _cages.removeWhere((c) => c.id == cage.id);
         _isLoading = false;
       });
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('Paire supprimée avec succès'),
+            content: Text('Cage supprimée avec succès'),
             backgroundColor: Colors.green,
           ),
         );
@@ -161,16 +161,16 @@ class _PairsPageState extends State<PairsPage> {
     }
   }
 
-  void _openAddPairDialog() async {
+  void _openAddCageDialog() async {
     if (!mounted) return;
 
-    final Pair? newPair = await showDialog<Pair>(
+    final Cage? newCage = await showDialog<Cage>(
       context: context,
-      builder: (_) => AddPairDialog(birds: widget.birds),
+      builder: (_) => AddCageDialog(birds: widget.birds),
     );
 
-    if (newPair != null) {
-      await _addPair(newPair);
+    if (newCage != null) {
+      await _addCage(newCage);
     }
   }
 
@@ -178,13 +178,13 @@ class _PairsPageState extends State<PairsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Paires"),
+        title: const Text("Cages"),
         backgroundColor: Colors.deepPurple,
         foregroundColor: Colors.white,
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh),
-            onPressed: _isLoading ? null : _loadPairs,
+            onPressed: _isLoading ? null : _loadCages,
           ),
         ],
       ),
@@ -203,13 +203,13 @@ class _PairsPageState extends State<PairsPage> {
                     ),
                     const SizedBox(height: 20),
                     ElevatedButton(
-                      onPressed: _loadPairs,
+                      onPressed: _loadCages,
                       child: const Text('Réessayer'),
                     ),
                   ],
                 ),
               )
-              : _pairs.isEmpty
+              : _cages.isEmpty
               ? Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -221,24 +221,24 @@ class _PairsPageState extends State<PairsPage> {
                     ),
                     const SizedBox(height: 16),
                     const Text(
-                      'Aucune paire enregistrée',
+                      'Aucune cage enregistrée',
                       style: TextStyle(fontSize: 18, color: Colors.grey),
                     ),
                     const SizedBox(height: 16),
                     ElevatedButton(
-                      onPressed: _openAddPairDialog,
-                      child: const Text('Créer une paire'),
+                      onPressed: _openAddCageDialog,
+                      child: const Text('Créer une cage'),
                     ),
                   ],
                 ),
               )
               : RefreshIndicator(
-                onRefresh: _loadPairs,
+                onRefresh: _loadCages,
                 child: ListView.builder(
                   padding: const EdgeInsets.all(16),
-                  itemCount: _pairs.length,
+                  itemCount: _cages.length,
                   itemBuilder: (context, index) {
-                    final pair = _pairs[index];
+                    final cage = _cages[index];
                     return Card(
                       margin: const EdgeInsets.only(bottom: 16),
                       child: ListTile(
@@ -246,23 +246,37 @@ class _PairsPageState extends State<PairsPage> {
                           backgroundColor: Colors.pink.shade50,
                           child: const Icon(Icons.favorite, color: Colors.pink),
                         ),
-                        title: Text(
-                          "♂ ${pair.male.identifier}     X     ♀ ${pair.female.identifier}",
-                          style: const TextStyle(fontWeight: FontWeight.bold),
+                        title: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "Num : ${cage.cageNumber}",
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 18,
+                              ),
+                            ),
+                            Text(
+                              "♂ ${cage.male.identifier}     X     ♀ ${cage.female.identifier}",
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
                         ),
                         subtitle: Text(
-                          "${pair.male.species} | ${pair.female.species}",
+                          "${cage.male.species} | ${cage.female.species}",
                           style: TextStyle(color: Colors.grey[600]),
                         ),
                         trailing: IconButton(
                           icon: const Icon(Icons.delete, color: Colors.red),
-                          onPressed: () => _deletePair(pair),
+                          onPressed: () => _deleteCage(cage),
                         ),
                         onTap: () {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (_) => PairDetailsPage(pair: pair),
+                              builder: (_) => CageDetailsPage(cage: cage),
                             ),
                           );
                         },
@@ -272,7 +286,7 @@ class _PairsPageState extends State<PairsPage> {
                 ),
               ),
       floatingActionButton: FloatingActionButton(
-        onPressed: _isLoading ? null : _openAddPairDialog,
+        onPressed: _isLoading ? null : _openAddCageDialog,
         backgroundColor: Colors.deepPurple,
         child: const Icon(Icons.add),
       ),

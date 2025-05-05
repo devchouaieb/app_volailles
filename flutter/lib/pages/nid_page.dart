@@ -1,5 +1,6 @@
+import 'package:app_volailles/models/nest.dart';
 import 'package:flutter/material.dart';
-import '../models/nid.dart';
+
 import 'nid_details_page.dart';
 
 class NidPage extends StatefulWidget {
@@ -10,7 +11,7 @@ class NidPage extends StatefulWidget {
 }
 
 class _NidPageState extends State<NidPage> {
-  final List<Nid> _nids = [];
+  final List<Nest> _nids = [];
 
   void _addNid() async {
     final TextEditingController controller = TextEditingController();
@@ -34,7 +35,7 @@ class _NidPageState extends State<NidPage> {
                   final name = controller.text.trim();
                   if (name.isNotEmpty) {
                     setState(() {
-                      _nids.add(Nid(name: name));
+                      //_nids.add();
                     });
                   }
                   Navigator.pop(context);
@@ -46,10 +47,10 @@ class _NidPageState extends State<NidPage> {
     );
   }
 
-  void _openNidDetails(Nid nid) {
+  void _openNidDetails() {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (_) => NidDetailsPage(nid: nid)),
+      MaterialPageRoute(builder: (_) => NidDetailsPage()),
     );
   }
 
@@ -63,10 +64,10 @@ class _NidPageState extends State<NidPage> {
               : ListView.builder(
                 itemCount: _nids.length,
                 itemBuilder: (context, index) {
-                  final nid = _nids[index];
+                  final nest = _nids[index];
                   return ListTile(
-                    title: Text(nid.name),
-                    onTap: () => _openNidDetails(nid),
+                    title: Text(nest.cageNumber),
+                    onTap: () => _openNidDetails(),
                   );
                 },
               ),

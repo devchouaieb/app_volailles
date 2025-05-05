@@ -131,6 +131,7 @@ const getSelledBirds = asyncHandler(async (req, res) => {
 // @access  Private
 const getBirdsForSale = asyncHandler(async (req, res) => {
   const birds = await Bird.find({ 
+    user: { $ne: req.user.id },  
     forSale: true,
     sold: false // Only get birds that are not sold yet
   });

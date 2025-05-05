@@ -1,3 +1,4 @@
+import 'package:app_volailles/services/bird_transfer_service.dart';
 import 'package:flutter/material.dart';
 import 'package:app_volailles/models/bird.dart';
 import 'package:app_volailles/pages/add_bird.dart';
@@ -15,6 +16,7 @@ class BirdsPage extends StatefulWidget {
 
 class _BirdsPageState extends State<BirdsPage> {
   final _birdService = BirdService();
+  final _birdTransferService = BirdTransferService();
   List<Bird> _birds = [];
   bool _isLoading = true;
   String? _errorMessage;
@@ -171,11 +173,44 @@ class _BirdsPageState extends State<BirdsPage> {
           (dialogContext) => MarkForSaleDialog(
             bird: bird,
             dialogContext: dialogContext,
-            onSuccess: (double askingPrice) {
+            onSuccess: (double askingPrice) async {
               // Implement mark for sale functionality
+              _markForSale(bird, askingPrice);
             },
           ),
     );
+  }
+
+  void _markForSale(Bird bird, double askingPrice) async {
+    setState(() => _isLoading = true);
+
+    try {
+      await _birdTransferService.markBirdForSale(bird.id!, askingPrice);
+      if (!mounted) return;
+
+      setState(() {
+        _birds.removeWhere((b) => b.id == bird.id);
+        _isLoading = false;
+      });
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Oiseau marqué à vendre'),
+            backgroundColor: Colors.green,
+          ),
+        );
+      }
+    } catch (e) {
+      if (!mounted) return;
+      setState(() => _isLoading = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Erreur lors de marquer à vendre: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
   }
 
   void _navigateToAddBirdPage({Bird? bird}) async {
@@ -328,8 +363,8 @@ class _BirdsPageState extends State<BirdsPage> {
                                 Icons.sell,
                                 color: Colors.deepPurple,
                               ),
-                              onPressed: () => _showSellBirdDialog(bird),
-                              tooltip: 'Vendre',
+                              onPressed: () => _showMarkForSaleDialog(bird),
+                              tooltip: 'Marquer à Vendre',
                             ),
                             IconButton(
                               icon: const Icon(Icons.delete, color: Colors.red),

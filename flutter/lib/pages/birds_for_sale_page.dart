@@ -55,7 +55,7 @@ class _BirdsForSalePageState extends State<BirdsForSalePage> {
       // Show dialog to enter buyer information
       final result = await showDialog<Map<String, dynamic>>(
         context: context,
-        builder: (context) => _buildPurchaseDialog(bird),
+        builder: (context) => _buildPurchaseDialog(bird ,context),
       );
 
       if (result == null) {
@@ -105,7 +105,7 @@ class _BirdsForSalePageState extends State<BirdsForSalePage> {
     }
   }
 
-  Widget _buildPurchaseDialog(Bird bird) {
+  Widget _buildPurchaseDialog(Bird bird , BuildContext dialogContext) {
     final priceController = TextEditingController(
       text: bird.askingPrice?.toString() ?? '',
     );
@@ -183,7 +183,7 @@ class _BirdsForSalePageState extends State<BirdsForSalePage> {
       ),
       actions: [
         TextButton(
-          onPressed: () => Navigator.of(context).pop(),
+          onPressed: () => Navigator.of(dialogContext).pop(),
           child: const Text('Annuler'),
         ),
         ElevatedButton(

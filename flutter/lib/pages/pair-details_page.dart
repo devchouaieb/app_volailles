@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:app_volailles/models/pair.dart';
 import 'package:app_volailles/utils/date_utils.dart'; // 👈 Pour calculateAge
 
-class PairDetailsPage extends StatelessWidget {
+/*class PairDetailsPage extends StatelessWidget {
   final Pair pair;
 
   const PairDetailsPage({super.key, required this.pair});
@@ -149,4 +148,4 @@ class PairDetailsPage extends StatelessWidget {
       },
     );
   }
-}
+}*/
