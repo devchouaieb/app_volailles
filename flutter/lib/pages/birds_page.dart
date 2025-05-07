@@ -358,7 +358,7 @@ class _BirdsPageState extends State<BirdsPage> {
                                 ),
                               ),
                             const SizedBox(width: 8),
-                            IconButton(
+                         if(!bird.forSale && !bird.sold)   IconButton(
                               icon: const Icon(
                                 Icons.sell,
                                 color: Colors.deepPurple,

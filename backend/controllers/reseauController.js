@@ -61,7 +61,7 @@ exports.deleteReseau = async (req, res) => {
         if (!reseau) {
             return res.status(404).json({ message: 'Reseau not found' });
         }
-        res.json({ id: req.params.id });
+        res.status(200).json({ id: req.params.id });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }

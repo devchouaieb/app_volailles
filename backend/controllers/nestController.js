@@ -184,7 +184,7 @@ const deleteNest = asyncHandler(async (req, res) => {
       });
     }
 
-    await nest.remove();
+    await Nest.deleteOne({ _id: req.params.id });
 
     res.status(200).json({
       success: true,

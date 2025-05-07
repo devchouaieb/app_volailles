@@ -15,12 +15,7 @@ const NestSchema = new mongoose.Schema({
     type: Number,
     required: [true, "Le nombre d'œufs fécondés est obligatoire"],
     min: [0, "Le nombre d'œufs fécondés ne peut pas être négatif"],
-    validate: {
-      validator: function(value) {
-        return value <= this.numberOfEggs;
-      },
-      message: "Le nombre d'œufs fécondés ne peut pas être supérieur au nombre total d'œufs"
-    }
+   
   },
   exclusionDate: {
     type: Date,
@@ -30,12 +25,6 @@ const NestSchema = new mongoose.Schema({
     type: Number,
     required: [true, "Le nombre d'œufs extraits est obligatoire"],
     min: [0, "Le nombre d'œufs extraits ne peut pas être négatif"],
-    validate: {
-      validator: function(value) {
-        return value <= this.numberOfEggs;
-      },
-      message: "Le nombre d'œufs extraits ne peut pas être supérieur au nombre total d'œufs"
-    }
   },
   firstBirdExitDate: {
     type: Date

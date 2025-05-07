@@ -65,6 +65,10 @@ class _CagesPageState extends State<CagesPage> {
 
       setState(() {
         _cages.add(newCage);
+        widget.birds.firstWhere((bird) => bird.id == newCage.male.id).cage =
+            newCage.cageNumber;
+             widget.birds.firstWhere((bird) => bird.id == newCage.female.id).cage =
+            newCage.cageNumber;
         _isLoading = false;
       });
 

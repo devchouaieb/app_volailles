@@ -105,7 +105,8 @@ const deleteCage = asyncHandler(async (req, res) => {
       });
     }
 
-    await cage.remove();
+    await Cage.deleteOne({ _id: req.params.id });
+
 
     res.status(200).json({
       success: true,

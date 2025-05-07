@@ -45,7 +45,7 @@ class CageService {
   Future<Cage> createCage(Cage cage) async {
     try {
       final response = await _apiService.post('cages', cage.toJson());
-      if (response["success"]  == true) {
+      if (response["success"] == true) {
         return Cage.fromJson(response['data']);
       } else {
         throw Exception('Failed to create cage: ${response['message']}');
@@ -59,7 +59,7 @@ class CageService {
   Future<void> deleteCage(String id) async {
     try {
       final response = await _apiService.delete('cages/$id');
-      if (response.statusCode != 200) {
+      if (response["success"] != true) {
         throw Exception('Failed to delete cage: ${response.data['message']}');
       }
     } catch (e) {

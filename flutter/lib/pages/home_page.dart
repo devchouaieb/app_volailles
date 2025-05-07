@@ -93,19 +93,19 @@ class _HomePageState extends State<HomePage> {
       // Load data in batches to prevent UI blocking
       final futures = await Future.wait([
         _birdSyncService.syncBirds(),
-        _birdSyncService.checkConflicts(_birds),
+   //     _birdSyncService.checkConflicts(_birds),
         _birdService.getSoldBirds(), // Récupérer également les oiseaux vendus
       ]);
 
       if (!mounted) return;
 
       final syncedBirds = futures[0];
-      final conflicts = futures[1];
-      final soldBirds = futures[2];
+   //   final conflicts = futures[1];
+      final soldBirds = futures[1];
 
-      if (conflicts.isNotEmpty) {
+      /* if (conflicts.isNotEmpty) {
         await _birdSyncService.resolveConflicts(conflicts);
-      }
+      } */
 
       // Update the UI with the new data
       if (mounted) {

@@ -53,7 +53,7 @@ class NestService {
   Future<void> deleteNest(String id) async {
     try {
       final response = await _apiService.delete('nests/$id');
-      if (response.statusCode != 200) {
+      if (response["success"] != true) {
         throw Exception('Failed to delete nest: ${response.data['message']}');
       }
     } catch (e) {

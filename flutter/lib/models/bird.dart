@@ -38,24 +38,29 @@ class Bird {
 
   // Conversion pour l'API
   Map<String, dynamic> toJson() {
-    return {
-      "_id": id ??"",
-      'identifier': identifier,
-      'gender': gender,
-      'species': species,
-      'variety': variety,
-      'status': status,
-      'cage': cage,
-      'birthDate': birthDate,
-      'price': price,
-      'sold': sold,
-      'soldDate': soldDate,
-      'soldPrice': soldPrice,
-      'buyerInfo': buyerInfo,
-      'forSale': forSale,
-      'askingPrice': askingPrice,
-      'sellerId': sellerId,
-    };
+     final map = {
+    'identifier': identifier,
+    'gender': gender,
+    'species': species,
+    'variety': variety,
+    'status': status,
+    'cage': cage,
+    'birthDate': birthDate,
+    'price': price,
+    'sold': sold,
+    'soldDate': soldDate,
+    'soldPrice': soldPrice,
+    'buyerInfo': buyerInfo,
+    'forSale': forSale,
+    'askingPrice': askingPrice,
+    'sellerId': sellerId,
+  };
+
+  if (id != null && id!.isNotEmpty) {
+    map['_id'] = id;
+  }
+
+  return map;
   }
 
   // Création depuis la réponse API
