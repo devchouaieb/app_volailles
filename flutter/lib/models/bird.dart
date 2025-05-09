@@ -57,8 +57,10 @@ class Bird {
       'buyerInfo': buyerInfo,
       'forSale': forSale,
       'askingPrice': askingPrice,
-      'sellerId': sellerId,
     };
+    if (sellerId !=null){
+      map['seller']= sellerId;
+    }
 
     if (id != null && id!.isNotEmpty) {
       map['_id'] = id;
@@ -88,7 +90,7 @@ class Bird {
               : null,
       forSale: json['forSale'] ?? false,
       askingPrice: json['askingPrice']?.toDouble(),
-      sellerId: json['sellerId'],
+      sellerId: json['seller'],
       userId : json["user"] 
     );
   }

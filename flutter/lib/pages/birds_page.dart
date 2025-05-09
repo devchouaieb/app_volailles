@@ -8,7 +8,8 @@ import 'package:app_volailles/services/bird_service.dart';
 import 'package:app_volailles/utils/date_utils.dart';
 
 class BirdsPage extends StatefulWidget {
-  const BirdsPage({super.key});
+  final String? userId;
+  const BirdsPage(this.userId, {super.key});
 
   @override
   State<BirdsPage> createState() => _BirdsPageState();
@@ -229,7 +230,8 @@ class _BirdsPageState extends State<BirdsPage> {
   }
 
   Color _getBirdColor(Bird bird) {
-    if (bird.sold) {
+    print(widget.userId);
+    if (bird.sellerId == widget.userId) {
       return Colors.purple.shade300;
     } else if (bird.gender.toLowerCase() == 'male') {
       return Colors.blue.shade100;
@@ -358,7 +360,9 @@ class _BirdsPageState extends State<BirdsPage> {
                                 ),
                               ),
                             const SizedBox(width: 8),
-                            if (!bird.forSale && !bird.sold)
+                            if (!bird.forSale &&
+                                !bird.sold &&
+                                bird.sellerId == null)
                               IconButton(
                                 icon: const Icon(
                                   Icons.sell,
@@ -367,7 +371,7 @@ class _BirdsPageState extends State<BirdsPage> {
                                 onPressed: () => _showMarkForSaleDialog(bird),
                                 tooltip: 'Marquer à Vendre',
                               ),
-                            if (!bird.sold)
+                            if (!bird.sold && bird.sellerId == null)
                               IconButton(
                                 icon: const Icon(
                                   Icons.delete,

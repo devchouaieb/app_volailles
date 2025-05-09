@@ -10,7 +10,8 @@ const {
   getSelledBirds,
   getBirdsForSale,
   getBirdsNotSold,
-  markBirdForSale
+  markBirdForSale,
+  purchaseBird
 } = require('../controllers/birdController');
 
 // All routes are protected and require authentication
@@ -30,6 +31,9 @@ router.put('/:id/sell', sellBird);
 
 // Route pour marquer un oiseau en vente
 router.put('/:id/mark-for-sale', markBirdForSale);
+
+// Route pour acherter un oiseau
+router.put('/:id/purchase',purchaseBird);
 
 // Route pour obtenir les oiseaux vendus
 router.get('/sold', getSelledBirds);

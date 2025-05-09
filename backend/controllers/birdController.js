@@ -5,7 +5,7 @@ const asyncHandler = require('express-async-handler');
 // @route   GET /api/birds
 // @access  Private
 const getBirds = asyncHandler(async (req, res) => {
-  const birds = await Bird.find({ user: req.user.id });
+  const birds = await Bird.find({ $or: [{ user: req.user.id }, { seller: req.user.id }] });
   res.status(200).json(birds);
 });
 
@@ -119,9 +119,8 @@ const sellBird = asyncHandler(async (req, res) => {
 // @route   GET /api/birds/sold
 // @access  Private
 const getSelledBirds = asyncHandler(async (req, res) => {
-  const birds = await Bird.find({ 
-    user: req.user.id,
-    sold: true 
+  const birds = await Bird.find({
+    seller: req.user.id,
   });
   res.status(200).json(birds);
 });
@@ -130,7 +129,7 @@ const getSelledBirds = asyncHandler(async (req, res) => {
 // @route   GET /api/birds/for-sale
 // @access  Private
 const getBirdsForSale = asyncHandler(async (req, res) => {
-  const birds = await Bird.find({  
+  const birds = await Bird.find({
     forSale: true,
     sold: false // Only get birds that are not sold yet
   });
@@ -141,12 +140,41 @@ const getBirdsForSale = asyncHandler(async (req, res) => {
 // @route   GET /api/birds/available
 // @access  Private
 const getBirdsNotSold = asyncHandler(async (req, res) => {
-  const birds = await Bird.find({ 
+  const birds = await Bird.find({
     user: req.user.id,
     sold: false // Only get birds that are not sold yet
   });
   res.status(200).json(birds);
 });
+// @desc    Purchase a bird
+// @root    PUT /api/birds/:id/purchase
+// @access  Pricate
+const purchaseBird = asyncHandler(async (req, res) => {
+  const bird = await Bird.findById(req.params.id);
+  if (!bird) {
+    res.status(404);
+    throw new Error('Bird not found');
+  }
+
+  // Check if bird is already sold
+  if (bird.sold) {
+    res.status(400);
+    throw new Error('Already sold');
+  }
+  // Prepare update data
+  const updateData = {
+    seller: bird.user,
+    user: req.user.id,
+    ...req.body
+  };
+  const updatedBird = await Bird.findByIdAndUpdate(
+    req.params.id,
+    updateData,
+    { new: true }
+  );
+
+  res.status(200).json(updatedBird);
+})
 
 // @desc    Mark a bird for sale
 // @route   PUT /api/birds/:id/mark-for-sale
@@ -194,5 +222,6 @@ module.exports = {
   getSelledBirds,
   getBirdsForSale,
   getBirdsNotSold,
-  markBirdForSale
+  markBirdForSale,
+  purchaseBird
 }; 

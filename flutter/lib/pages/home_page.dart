@@ -518,7 +518,7 @@ class _HomePageState extends State<HomePage> {
       if (!mounted) return;
       Navigator.push(
         currentContext,
-        MaterialPageRoute(builder: (_) => const BirdsPage()),
+        MaterialPageRoute(builder: (_) =>  BirdsPage( _currentUser?["id"])),
       );
     } else if (title == 'Statistiques') {
       if (!mounted) return;

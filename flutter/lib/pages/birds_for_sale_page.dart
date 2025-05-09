@@ -83,7 +83,7 @@ class _BirdsForSalePageState extends State<BirdsForSalePage> {
       );
 
       // Add the purchased bird to the user's collection
-      await _birdService.createBird(purchasedBird);
+     // await _birdService.createBird(purchasedBird);
 
       // Remove the bird from the for sale list
       setState(() {
@@ -197,7 +197,7 @@ class _BirdsForSalePageState extends State<BirdsForSalePage> {
         ElevatedButton(
           onPressed: () {
             if (formKey.currentState!.validate()) {
-              Navigator.of(context).pop({
+              Navigator.of(dialogContext).pop({
                 'price': double.parse(priceController.text),
                 'nationalId': nationalIdController.text,
                 'fullName': fullNameController.text,
