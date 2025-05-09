@@ -77,12 +77,12 @@ const BirdSchema = new mongoose.Schema({
   mother: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Bird',
-    required: true
+    required: false
   },
   father: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Bird',
-    required: true
+    required: false
   },
   seller: {
     type: mongoose.Schema.Types.ObjectId,

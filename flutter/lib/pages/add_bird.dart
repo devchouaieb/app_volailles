@@ -238,6 +238,38 @@ class _AddBirdPageState extends State<AddBirdPage> {
             ),
             const SizedBox(height: 16),
             DropdownButtonFormField<String>(
+              value: _selectedVariety.isEmpty ? null : _selectedVariety,
+              decoration: const InputDecoration(labelText: 'couleur'),
+              items:
+              [
+                'beige',
+                'blanc',
+                'bleu',
+                'gris',
+                'jaune',
+                'marron',
+                'noir',
+                'ocre',
+                'ocre clair',
+                'ocre foncé',
+                'ocre moyen',
+                'ocre pale',
+                'ocre sombre',
+                'ocre vif',
+                'orange',
+                'rose',
+                'rouge',
+                'turquoise',
+                'violet',
+                'melange',
+              ]
+                  .map((e) => DropdownMenuItem(value: e, child: Text(e)))
+                  .toList(),
+              onChanged:
+                  (value) => setState(() => _selectedVariety = value ?? ''),
+            ),
+            const SizedBox(height: 16),
+            DropdownButtonFormField<String>(
               value: _selectedStatus,
               decoration: const InputDecoration(labelText: 'État de santé *'),
               items:
