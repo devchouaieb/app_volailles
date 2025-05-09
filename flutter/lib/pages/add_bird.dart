@@ -7,8 +7,15 @@ class AddBirdPage extends StatefulWidget {
   final Function(Bird) onSave;
   final Bird? bird;
   final String? cage;
+  final String? sppecie;
 
-  const AddBirdPage({super.key, required this.onSave, this.bird, this.cage});
+  const AddBirdPage({
+    super.key,
+    required this.onSave,
+    this.bird,
+    this.cage,
+    this.sppecie,
+  });
 
   @override
   State<AddBirdPage> createState() => _AddBirdPageState();
@@ -70,6 +77,9 @@ class _AddBirdPageState extends State<AddBirdPage> {
       }
       // État par défaut pour les nouveaux oiseaux
       _selectedStatus = 'En bonne santé';
+      if (widget.sppecie != null) {
+        _selectedSpecies = widget.sppecie!;
+      }
     }
   }
 

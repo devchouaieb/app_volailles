@@ -28,3 +28,11 @@ String formatDate(String dateString) {
     return "Date inconnue";
   }
 }
+String formatDateTime(String dateString) {
+  try {
+    final date = DateTime.parse(dateString);
+    return DateFormat('dd/MM/yyyy HH:mm ').format(date);
+  } catch (e) {
+    return "Date inconnue";
+  }
+}

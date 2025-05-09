@@ -549,7 +549,7 @@ class _HomePageState extends State<HomePage> {
         Navigator.pop(context);
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (_) => const BirdsForSalePage()),
+          MaterialPageRoute(builder: (_) =>  BirdsForSalePage(_currentUser)),
         );
         break;
       case 'Statistiques':

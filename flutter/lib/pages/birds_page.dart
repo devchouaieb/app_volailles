@@ -402,6 +402,16 @@ class _BirdsPageState extends State<BirdsPage> {
                               onPressed: () => _deleteBird(bird),
                               tooltip: 'Supprimer',
                             ),
+                              
+                            if (!bird.sold)
+                              IconButton(
+                                icon: const Icon(
+                                  Icons.delete,
+                                  color: Colors.red,
+                                ),
+                                onPressed: () => _deleteBird(bird),
+                                tooltip: 'Supprimer',
+                              ),
                           ],
                         ),
                       ),
