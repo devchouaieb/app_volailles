@@ -2,16 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:app_volailles/models/bird.dart';
 import 'package:app_volailles/services/bird_transfer_service.dart';
 import 'package:app_volailles/services/bird_service.dart';
-import 'package:app_volailles/utils/date_utils.dart';
 
 class BirdsForSalePage extends StatefulWidget {
-  const BirdsForSalePage({Key? key}) : super(key: key);
+  final Map<String, dynamic>? currentUser;
+  const BirdsForSalePage(this.currentUser, {super.key});
 
   @override
   State<BirdsForSalePage> createState() => _BirdsForSalePageState();
 }
 
 class _BirdsForSalePageState extends State<BirdsForSalePage> {
+  final nationalIdController = TextEditingController();
+  final fullNameController = TextEditingController();
+  final phoneController = TextEditingController();
   final BirdTransferService _birdTransferService = BirdTransferService();
   final BirdService _birdService = BirdService();
   List<Bird> _birdsForSale = [];
@@ -21,7 +24,14 @@ class _BirdsForSalePageState extends State<BirdsForSalePage> {
   @override
   void initState() {
     super.initState();
+    _initInputs();
     _loadBirdsForSale();
+  }
+
+  _initInputs() {
+    nationalIdController.text = widget.currentUser?["nationalId"];
+    phoneController.text = widget.currentUser?["phone"] ?? "";
+    fullNameController.text = widget.currentUser?["fullName"];
   }
 
   Future<void> _loadBirdsForSale() async {
@@ -32,7 +42,7 @@ class _BirdsForSalePageState extends State<BirdsForSalePage> {
       });
 
       final birdsForSale = await _birdTransferService.getBirdsForSale();
-      
+
       // Filter out sold birds
       final availableBirds = birdsForSale.where((bird) => !bird.sold).toList();
 
@@ -55,7 +65,7 @@ class _BirdsForSalePageState extends State<BirdsForSalePage> {
       // Show dialog to enter buyer information
       final result = await showDialog<Map<String, dynamic>>(
         context: context,
-        builder: (context) => _buildPurchaseDialog(bird ,context),
+        builder: (context) => _buildPurchaseDialog(bird, context),
       );
 
       if (result == null) {
@@ -105,13 +115,11 @@ class _BirdsForSalePageState extends State<BirdsForSalePage> {
     }
   }
 
-  Widget _buildPurchaseDialog(Bird bird , BuildContext dialogContext) {
+  Widget _buildPurchaseDialog(Bird bird, BuildContext dialogContext) {
     final priceController = TextEditingController(
       text: bird.askingPrice?.toString() ?? '',
     );
-    final nationalIdController = TextEditingController();
-    final fullNameController = TextEditingController();
-    final phoneController = TextEditingController();
+
     final formKey = GlobalKey<FormState>();
 
     return AlertDialog(
@@ -262,6 +270,7 @@ class _BirdsForSalePageState extends State<BirdsForSalePage> {
                 itemCount: _birdsForSale.length,
                 itemBuilder: (context, index) {
                   final bird = _birdsForSale[index];
+                  print("${bird.userId} widget : ${widget.currentUser}");
                   return Card(
                     margin: const EdgeInsets.symmetric(
                       horizontal: 16,
@@ -291,14 +300,17 @@ class _BirdsForSalePageState extends State<BirdsForSalePage> {
                           Text('Prix demandé: ${bird.askingPrice} DT'),
                         ],
                       ),
-                      trailing: ElevatedButton(
-                        onPressed: () => _purchaseBird(bird),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.green,
-                          foregroundColor: Colors.white,
-                        ),
-                        child: const Text('Acheter'),
-                      ),
+                      trailing:
+                          widget.currentUser?["id"] == bird.userId
+                              ? SizedBox()
+                              : ElevatedButton(
+                                onPressed: () => _purchaseBird(bird),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.green,
+                                  foregroundColor: Colors.white,
+                                ),
+                                child: const Text('Acheter'),
+                              ),
                     ),
                   );
                 },

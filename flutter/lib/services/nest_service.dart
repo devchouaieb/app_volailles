@@ -39,8 +39,8 @@ class NestService {
         'nests/${nest.id}',
         nest.toJson(),
       );
-      if (response.statusCode == 200) {
-        return Nest.fromJson(response.data['data']);
+      if (response["success"] == true) {
+        return Nest.fromJson(response['data']);
       } else {
         throw Exception('Failed to update nest: ${response.data['message']}');
       }
@@ -54,7 +54,7 @@ class NestService {
     try {
       final response = await _apiService.delete('nests/$id');
       if (response["success"] != true) {
-        throw Exception('Failed to delete nest: ${response.data['message']}');
+        throw Exception('Failed to delete nest: ${response['message']}');
       }
     } catch (e) {
       print('Error in deleteNest: $e');

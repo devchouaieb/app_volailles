@@ -358,19 +358,24 @@ class _BirdsPageState extends State<BirdsPage> {
                                 ),
                               ),
                             const SizedBox(width: 8),
-                         if(!bird.forSale && !bird.sold)   IconButton(
-                              icon: const Icon(
-                                Icons.sell,
-                                color: Colors.deepPurple,
+                            if (!bird.forSale && !bird.sold)
+                              IconButton(
+                                icon: const Icon(
+                                  Icons.sell,
+                                  color: Colors.deepPurple,
+                                ),
+                                onPressed: () => _showMarkForSaleDialog(bird),
+                                tooltip: 'Marquer à Vendre',
                               ),
-                              onPressed: () => _showMarkForSaleDialog(bird),
-                              tooltip: 'Marquer à Vendre',
-                            ),
-                            IconButton(
-                              icon: const Icon(Icons.delete, color: Colors.red),
-                              onPressed: () => _deleteBird(bird),
-                              tooltip: 'Supprimer',
-                            ),
+                            if (!bird.sold)
+                              IconButton(
+                                icon: const Icon(
+                                  Icons.delete,
+                                  color: Colors.red,
+                                ),
+                                onPressed: () => _deleteBird(bird),
+                                tooltip: 'Supprimer',
+                              ),
                           ],
                         ),
                         onTap: () => _navigateToAddBirdPage(bird: bird),

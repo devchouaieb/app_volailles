@@ -1,3 +1,4 @@
+import 'package:app_volailles/utils/date_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:app_volailles/models/cage.dart';
 import 'package:app_volailles/models/bird.dart';
@@ -83,7 +84,7 @@ class CageDetailsPage extends StatelessWidget {
                     ),
                     const SizedBox(height: 8),
                     if (cage.createdAt != null)
-                      _buildInfoRow('Date de création', cage.createdAt!),
+                      _buildInfoRow('Date de création',formatDate( cage.createdAt!)),
                     _buildInfoRow('Statut', cage.status ?? 'active'),
                     if (cage.notes != null && cage.notes!.isNotEmpty)
                       _buildInfoRow('Notes', cage.notes!),
@@ -105,7 +106,7 @@ class CageDetailsPage extends StatelessWidget {
         _buildInfoRow('Espèce', bird.species),
         _buildInfoRow('Variété', bird.variety),
         _buildInfoRow('Cage', bird.cage),
-        _buildInfoRow('Date de naissance', bird.birthDate),
+        _buildInfoRow('Date de naissance:',formatDateTime( bird.birthDate)),
         if (bird.price > 0) _buildInfoRow('Prix', '${bird.price} DT'),
       ],
     );

@@ -633,7 +633,7 @@ class _HomePageState extends State<HomePage> {
       if (!mounted) return;
       Navigator.push(
         currentContext,
-        MaterialPageRoute(builder: (_) => const BirdsForSalePage()),
+        MaterialPageRoute(builder: (_) =>  BirdsForSalePage(_currentUser  )),
       );
     } else if (title == 'Espèces') {
       if (!mounted) return;
