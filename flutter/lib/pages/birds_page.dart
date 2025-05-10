@@ -58,20 +58,16 @@ class _BirdsPageState extends State<BirdsPage> {
     setState(() => _isLoading = true);
 
     try {
-      Bird updatedBird;
       if (bird.id == null) {
-        updatedBird = await _birdService.createBird(bird);
+        await _birdService.createBird(bird);
       } else {
-        updatedBird = await _birdService.updateBird(bird.id!, bird);
+        await _birdService.updateBird(bird.id!, bird);
       }
 
       if (!mounted) return;
 
-      setState(() {
-        _birds.removeWhere((b) => b.id == updatedBird.id);
-        _birds.add(updatedBird);
-        _isLoading = false;
-      });
+      // Forcer le rechargement de la liste depuis l'API
+      await _loadBirds();
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(

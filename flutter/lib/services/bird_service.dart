@@ -6,6 +6,17 @@ import 'package:app_volailles/services/api_service.dart';
 class BirdService {
   final _apiService = ApiService();
 
+  // Convertir le genre en anglais pour l'API
+  Map<String, dynamic> _convertGenderForApi(Map<String, dynamic> data) {
+    final Map<String, dynamic> converted = Map<String, dynamic>.from(data);
+    if (converted['gender'] == 'mâle') {
+      converted['gender'] = 'male';
+    } else if (converted['gender'] == 'femelle') {
+      converted['gender'] = 'female';
+    }
+    return converted;
+  }
+
   // Récupérer tous les oiseaux
   Future<List<Bird>> getBirds() async {
     try {
@@ -149,11 +160,13 @@ class BirdService {
   Future<Bird> createBird(Bird bird) async {
     try {
       print('🔄 Création d\'un nouvel oiseau...');
-      final response = await _apiService.post('birds', bird.toJson());
+      final jsonData = _convertGenderForApi(bird.toJson());
+      final response = await _apiService.post('birds', jsonData);
       print('📦 Réponse API: $response');
 
       if (response is Map) {
-        final createdBird = Bird.fromApi(Map<String, dynamic>.from(response));
+        final data = response['data'] ?? response;
+        final createdBird = Bird.fromApi(Map<String, dynamic>.from(data));
         print('✅ Nouvel oiseau créé: ${createdBird.identifier}');
         return createdBird;
       }
@@ -170,11 +183,13 @@ class BirdService {
   Future<Bird> updateBird(String id, Bird bird) async {
     try {
       print('🔄 Mise à jour de l\'oiseau $id...');
-      final response = await _apiService.put('birds/$id', bird.toJson());
+      final jsonData = _convertGenderForApi(bird.toJson());
+      final response = await _apiService.put('birds/$id', jsonData);
       print('📦 Réponse API: $response');
 
       if (response is Map) {
-        final updatedBird = Bird.fromApi(Map<String, dynamic>.from(response));
+        final data = response['data'] ?? response;
+        final updatedBird = Bird.fromApi(Map<String, dynamic>.from(data));
         print('✅ Oiseau mis à jour: ${updatedBird.identifier}');
         return updatedBird;
       }
