@@ -1,6 +1,7 @@
 import 'package:app_volailles/utils/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:app_volailles/models/bird.dart';
+import 'package:app_volailles/data/bird_species.dart';
 
 class AddBirdPage extends StatefulWidget {
   final Function(Bird) onSave;
@@ -18,12 +19,27 @@ class _AddBirdPageState extends State<AddBirdPage> {
 
   String _identifier = '';
   String _gender = Constants.male;
+  String? _selectedCategory;
   String? _selectedSpecies;
   String _selectedVariety = '';
   String? _selectedStatus;
   String _cage = '';
   DateTime? _birthDate;
   double _price = 0.0;
+
+  // Fonction pour convertir les anciens états en nouveaux états
+  String _convertOldStatusToNew(String oldStatus) {
+    switch (oldStatus.toLowerCase()) {
+      case 'healthy':
+        return 'En bonne santé';
+      case 'sick':
+        return 'Malade';
+      case 'in treatment':
+        return 'En traitement';
+      default:
+        return 'En bonne santé'; // Valeur par défaut
+    }
+  }
 
   @override
   void initState() {
@@ -34,14 +50,26 @@ class _AddBirdPageState extends State<AddBirdPage> {
       _gender = b.gender;
       _selectedSpecies = b.species;
       _selectedVariety = b.variety;
-      _selectedStatus = b.status;
+      _selectedStatus = _convertOldStatusToNew(
+        b.status,
+      ); // Conversion de l'état
       _cage = b.cage;
       _birthDate = DateTime.tryParse(b.birthDate);
       _price = b.price;
+
+      // Set the category based on the species
+      for (var category in birdCategories) {
+        if (category.species.any((s) => s.commonName == b.species)) {
+          _selectedCategory = category.name;
+          break;
+        }
+      }
     } else {
       if (widget.cage != null) {
         _cage = widget.cage!;
       }
+      // État par défaut pour les nouveaux oiseaux
+      _selectedStatus = 'En bonne santé';
     }
   }
 
@@ -137,7 +165,7 @@ class _AddBirdPageState extends State<AddBirdPage> {
               children: [
                 Expanded(
                   child: RadioListTile<String>(
-                    title: const Text("Male"),
+                    title: const Text("Mâle"),
                     value: Constants.male,
                     groupValue: _gender,
                     onChanged: (value) => setState(() => _gender = value!),
@@ -154,78 +182,53 @@ class _AddBirdPageState extends State<AddBirdPage> {
               ],
             ),
             const SizedBox(height: 16),
+            // Category Selection
+            DropdownButtonFormField<String>(
+              value: _selectedCategory,
+              decoration: const InputDecoration(labelText: 'Catégorie *'),
+              items:
+                  getAllCategories()
+                      .map((e) => DropdownMenuItem(value: e, child: Text(e)))
+                      .toList(),
+              validator: (value) => value == null ? 'Champ requis' : null,
+              onChanged: (value) {
+                setState(() {
+                  _selectedCategory = value;
+                  _selectedSpecies =
+                      null; // Reset species when category changes
+                });
+              },
+            ),
+            const SizedBox(height: 16),
+            // Species Selection
             DropdownButtonFormField<String>(
               value: _selectedSpecies,
               decoration: const InputDecoration(labelText: 'Espèce *'),
               items:
-                  [
-                        'Becs crochus',
-                        'Bengali rouge',
-                        'Calopsitte',
-                        'Canari',
-                        'Canari couleur lipochrome',
-                        'Canari de posture Fife Fancy',
-                        'Canari de posture Gloster',
-                        'Capucin tête noire',
-                        'Chardonneret élégant',
-                        'Diamant bavette',
-                        'Diamant de Gould',
-                        'Diamant mandarin',
-                        'Inséparable',
-                        'Moineau du Japon',
-                        'Mulet',
-                        'Perruche de Pennant',
-                        'Perruche ondulée',
-                        'Perruches anglaises',
-                        'Pigeon de fantaisie',
-                        'Pigeon voyageur',
-                        'Serin cini',
-                        'Tourterelle rieuse',
-                        'Youyou du Sénégal',
-                      ]
-                      .map((e) => DropdownMenuItem(value: e, child: Text(e)))
-                      .toList(),
+                  _selectedCategory == null
+                      ? []
+                      : getBirdSpeciesByCategory(_selectedCategory!)
+                          .map(
+                            (species) => DropdownMenuItem(
+                              value: species.commonName,
+                              child: Text(
+                                '${species.commonName} (${species.scientificName})',
+                              ),
+                            ),
+                          )
+                          .toList(),
               validator: (value) => value == null ? 'Champ requis' : null,
-              onChanged: (value) => setState(() => _selectedSpecies = value),
-            ),
-            const SizedBox(height: 16),
-            DropdownButtonFormField<String>(
-              value: _selectedVariety.isEmpty ? null : _selectedVariety,
-              decoration: const InputDecoration(labelText: 'couleur'),
-              items:
-                  [
-                        'beige',
-                        'blanc',
-                        'bleu',
-                        'gris',
-                        'jaune',
-                        'marron',
-                        'noir',
-                        'ocre',
-                        'ocre clair',
-                        'ocre foncé',
-                        'ocre moyen',
-                        'ocre pale',
-                        'ocre sombre',
-                        'ocre vif',
-                        'orange',
-                        'rose',
-                        'rouge',
-                        'turquoise',
-                        'violet',
-                        'melange',
-                      ]
-                      .map((e) => DropdownMenuItem(value: e, child: Text(e)))
-                      .toList(),
               onChanged:
-                  (value) => setState(() => _selectedVariety = value ?? ''),
+                  _selectedCategory == null
+                      ? null
+                      : (value) => setState(() => _selectedSpecies = value),
             ),
             const SizedBox(height: 16),
             DropdownButtonFormField<String>(
               value: _selectedStatus,
               decoration: const InputDecoration(labelText: 'État de santé *'),
               items:
-                  ['Healthy', 'Sick', 'In Treatment']
+                  ['En bonne santé', 'Malade', 'En traitement', 'Mort', 'Vendu']
                       .map((e) => DropdownMenuItem(value: e, child: Text(e)))
                       .toList(),
               validator: (value) => value == null ? 'Champ requis' : null,
