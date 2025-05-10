@@ -145,7 +145,7 @@ class _AddBirdPageState extends State<AddBirdPage> {
                 ),
                 Expanded(
                   child: RadioListTile<String>(
-                    title: const Text("Female"),
+                    title: const Text("Femelle"),
                     value: Constants.female,
                     groupValue: _gender,
                     onChanged: (value) => setState(() => _gender = value!),
@@ -158,7 +158,31 @@ class _AddBirdPageState extends State<AddBirdPage> {
               value: _selectedSpecies,
               decoration: const InputDecoration(labelText: 'Espèce *'),
               items:
-                  ['Pigeon', 'Canary', 'Parrot']
+                  [
+                        'Becs crochus',
+                        'Bengali rouge',
+                        'Calopsitte',
+                        'Canari',
+                        'Canari couleur lipochrome',
+                        'Canari de posture Fife Fancy',
+                        'Canari de posture Gloster',
+                        'Capucin tête noire',
+                        'Chardonneret élégant',
+                        'Diamant bavette',
+                        'Diamant de Gould',
+                        'Diamant mandarin',
+                        'Inséparable',
+                        'Moineau du Japon',
+                        'Mulet',
+                        'Perruche de Pennant',
+                        'Perruche ondulée',
+                        'Perruches anglaises',
+                        'Pigeon de fantaisie',
+                        'Pigeon voyageur',
+                        'Serin cini',
+                        'Tourterelle rieuse',
+                        'Youyou du Sénégal',
+                      ]
                       .map((e) => DropdownMenuItem(value: e, child: Text(e)))
                       .toList(),
               validator: (value) => value == null ? 'Champ requis' : null,
@@ -167,9 +191,30 @@ class _AddBirdPageState extends State<AddBirdPage> {
             const SizedBox(height: 16),
             DropdownButtonFormField<String>(
               value: _selectedVariety.isEmpty ? null : _selectedVariety,
-              decoration: const InputDecoration(labelText: 'Variété'),
+              decoration: const InputDecoration(labelText: 'couleur'),
               items:
-                  ['Rouge', 'Bleu', 'Vert']
+                  [
+                        'beige',
+                        'blanc',
+                        'bleu',
+                        'gris',
+                        'jaune',
+                        'marron',
+                        'noir',
+                        'ocre',
+                        'ocre clair',
+                        'ocre foncé',
+                        'ocre moyen',
+                        'ocre pale',
+                        'ocre sombre',
+                        'ocre vif',
+                        'orange',
+                        'rose',
+                        'rouge',
+                        'turquoise',
+                        'violet',
+                        'melange',
+                      ]
                       .map((e) => DropdownMenuItem(value: e, child: Text(e)))
                       .toList(),
               onChanged:
