@@ -99,6 +99,7 @@ class AppDrawer extends StatelessWidget {
           _buildDrawerItem(Icons.bar_chart, 'Statistiques'),
           _buildDrawerItem(Icons.device_hub, 'Espèces'),
           const Divider(),
+          _buildDrawerItem(Icons.thermostat, 'Capteurs'),
           _buildDrawerItem(Icons.group, 'Associations'),
           _buildDrawerItem(Icons.account_tree, 'Réseaux'),
           const Divider(),

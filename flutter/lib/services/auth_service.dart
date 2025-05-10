@@ -13,6 +13,7 @@ class AuthService {
     String nationalId,
     String email,
     String password,
+    String association,
   ) async {
     try {
       final response = await http
@@ -24,6 +25,7 @@ class AuthService {
               'nationalId': nationalId,
               'email': email,
               'password': password,
+              'association': association,
             }),
           )
           .timeout(const Duration(seconds: 5));

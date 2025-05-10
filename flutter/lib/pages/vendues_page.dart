@@ -1,24 +1,50 @@
 import 'package:flutter/material.dart';
 import 'package:app_volailles/models/bird.dart';
 import 'package:app_volailles/utils/date_utils.dart';
+import 'package:app_volailles/services/bird_service.dart';
 
-class VenduesPage extends StatelessWidget {
-  final List<Bird> birds;
-  final List<Bird> soldBirds;
+class VenduesPage extends StatefulWidget {
+  const VenduesPage({Key? key}) : super(key: key);
 
-  const VenduesPage({
-    Key? key,
-    this.birds = const [],
-    this.soldBirds = const [],
-     Future<void> Function(
-      Bird bird,
-      double price,
-      String buyerNationalId,
-      String buyerFullName, {
-      String? buyerPhone,
-    })?
-    onSellBird,
-  }) : super(key: key);
+  @override
+  State<VenduesPage> createState() => _VenduesPageState();
+}
+
+class _VenduesPageState extends State<VenduesPage> {
+  final BirdService _birdService = BirdService();
+  List<Bird> _soldBirds = [];
+  bool _isLoading = true;
+  String? _errorMessage;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadSoldBirds();
+  }
+
+  Future<void> _loadSoldBirds() async {
+    try {
+      setState(() {
+        _isLoading = true;
+        _errorMessage = null;
+      });
+
+      final soldBirds = await _birdService.getSoldBirds();
+
+      if (!mounted) return;
+
+      setState(() {
+        _soldBirds = soldBirds;
+        _isLoading = false;
+      });
+    } catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _errorMessage = e.toString();
+        _isLoading = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -26,9 +52,42 @@ class VenduesPage extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Oiseaux vendus'),
         backgroundColor: Colors.deepPurple,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.refresh),
+            onPressed: _loadSoldBirds,
+            tooltip: 'Rafraîchir',
+          ),
+        ],
       ),
       body:
-          soldBirds.isEmpty
+          _isLoading
+              ? const Center(child: CircularProgressIndicator())
+              : _errorMessage != null
+              ? Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(
+                      Icons.error_outline,
+                      size: 48,
+                      color: Colors.red,
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      _errorMessage!,
+                      style: const TextStyle(color: Colors.red),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 16),
+                    ElevatedButton(
+                      onPressed: _loadSoldBirds,
+                      child: const Text('Réessayer'),
+                    ),
+                  ],
+                ),
+              )
+              : _soldBirds.isEmpty
               ? const Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -43,9 +102,9 @@ class VenduesPage extends StatelessWidget {
                 ),
               )
               : ListView.builder(
-                itemCount: soldBirds.length,
+                itemCount: _soldBirds.length,
                 itemBuilder: (context, index) {
-                  final bird = soldBirds[index];
+                  final bird = _soldBirds[index];
                   return Card(
                     margin: const EdgeInsets.symmetric(
                       horizontal: 16,

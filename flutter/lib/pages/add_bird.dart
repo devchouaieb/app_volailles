@@ -6,15 +6,8 @@ class AddBirdPage extends StatefulWidget {
   final Function(Bird) onSave;
   final Bird? bird;
   final String? cage;
-  final String? sppecie;
 
-  const AddBirdPage({
-    super.key,
-    required this.onSave,
-    this.bird,
-    this.cage,
-    this.sppecie,
-  });
+  const AddBirdPage({super.key, required this.onSave, this.bird, this.cage});
 
   @override
   State<AddBirdPage> createState() => _AddBirdPageState();
@@ -48,9 +41,6 @@ class _AddBirdPageState extends State<AddBirdPage> {
     } else {
       if (widget.cage != null) {
         _cage = widget.cage!;
-      }
-      if (widget.sppecie != null) {
-        _selectedSpecies = widget.sppecie!;
       }
     }
   }

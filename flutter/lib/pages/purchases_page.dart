@@ -7,11 +7,7 @@ class PurchasesPage extends StatefulWidget {
   final List<Bird> birds;
   final Function(Bird)? onAddBird;
 
-  const PurchasesPage({
-    super.key,
-    this.birds = const [],
-    this.onAddBird,
-  });
+  const PurchasesPage({super.key, this.birds = const [], this.onAddBird});
 
   @override
   State<PurchasesPage> createState() => _PurchasesPageState();

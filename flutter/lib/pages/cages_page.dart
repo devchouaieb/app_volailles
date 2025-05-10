@@ -65,10 +65,16 @@ class _CagesPageState extends State<CagesPage> {
 
       setState(() {
         _cages.add(newCage);
-        widget.birds.firstWhere((bird) => bird.id == newCage.male.id).cage =
-            newCage.cageNumber;
-             widget.birds.firstWhere((bird) => bird.id == newCage.female.id).cage =
-            newCage.cageNumber;
+        if (newCage.male?.id != null) {
+          widget.birds.firstWhere((bird) => bird.id == newCage.male!.id).cage =
+              newCage.cageNumber;
+        }
+        if (newCage.female?.id != null) {
+          widget
+              .birds
+              .firstWhere((bird) => bird.id == newCage.female!.id)
+              .cage = newCage.cageNumber;
+        }
         _isLoading = false;
       });
 
@@ -218,11 +224,7 @@ class _CagesPageState extends State<CagesPage> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Icon(
-                      Icons.favorite_border,
-                      size: 60,
-                      color: Colors.grey,
-                    ),
+                    const Icon(Icons.home, size: 60, color: Colors.grey),
                     const SizedBox(height: 16),
                     const Text(
                       'Aucune cage enregistrée',
@@ -248,7 +250,10 @@ class _CagesPageState extends State<CagesPage> {
                       child: ListTile(
                         leading: CircleAvatar(
                           backgroundColor: Colors.pink.shade50,
-                          child: const Icon(Icons.favorite, color: Colors.pink),
+                          child: const Icon(
+                            Icons.home,
+                            color: Color.fromARGB(255, 120, 4, 183),
+                          ),
                         ),
                         title: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -260,16 +265,27 @@ class _CagesPageState extends State<CagesPage> {
                                 fontSize: 18,
                               ),
                             ),
-                            Text(
-                              "♂ ${cage.male.identifier}     X     ♀ ${cage.female.identifier}",
-                              style: const TextStyle(
-                                fontWeight: FontWeight.bold,
+                            if (cage.male != null && cage.female != null)
+                              Text(
+                                "♂ ${cage.male!.identifier}     X     ♀ ${cage.female!.identifier}",
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              )
+                            else
+                              const Text(
+                                "Aucun oiseau assigné",
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.grey,
+                                ),
                               ),
-                            ),
                           ],
                         ),
                         subtitle: Text(
-                          "${cage.male.species} | ${cage.female.species}",
+                          cage.male != null && cage.female != null
+                              ? "${cage.male!.species} | ${cage.female!.species}"
+                              : cage.species,
                           style: TextStyle(color: Colors.grey[600]),
                         ),
                         trailing: IconButton(

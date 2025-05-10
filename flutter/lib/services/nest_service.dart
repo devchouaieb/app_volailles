@@ -35,12 +35,9 @@ class NestService {
 
   Future<Nest> updateNest(Nest nest) async {
     try {
-      final response = await _apiService.put(
-        'nests/${nest.id}',
-        nest.toJson(),
-      );
-      if (response["success"] == true) {
-        return Nest.fromJson(response['data']);
+      final response = await _apiService.put('nests/${nest.id}', nest.toJson());
+      if (response.statusCode == 200) {
+        return Nest.fromJson(response.data['data']);
       } else {
         throw Exception('Failed to update nest: ${response.data['message']}');
       }
@@ -54,7 +51,7 @@ class NestService {
     try {
       final response = await _apiService.delete('nests/$id');
       if (response["success"] != true) {
-        throw Exception('Failed to delete nest: ${response['message']}');
+        throw Exception('Failed to delete nest: ${response.data['message']}');
       }
     } catch (e) {
       print('Error in deleteNest: $e');

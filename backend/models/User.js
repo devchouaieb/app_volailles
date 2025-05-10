@@ -38,6 +38,12 @@ const UserSchema = new mongoose.Schema({
     enum: ['user', 'admin'],
     default: 'user'
   },
+  association: {
+    type: String,
+    required: [true, "L'association est obligatoire"],
+    enum: ['AOB CB', 'AON', 'AOS', 'AOG', 'AO GAFSA', 'AOK', 'AOM', 'ADO'],
+    trim: true
+  },
   createdAt: {
     type: Date,
     default: Date.now

@@ -1,4 +1,3 @@
-import 'package:app_volailles/utils/date_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:app_volailles/models/cage.dart';
 import 'package:app_volailles/models/bird.dart';
@@ -23,50 +22,52 @@ class CageDetailsPage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Male Bird Card
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      'Mâle',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.blue,
+            if (cage.male != null)
+              Card(
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'Mâle',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.blue,
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 8),
-                    _buildBirdInfo(cage.male),
-                  ],
+                      const SizedBox(height: 8),
+                      _buildBirdInfo(cage.male!),
+                    ],
+                  ),
                 ),
               ),
-            ),
-            const SizedBox(height: 16),
+            if (cage.male != null) const SizedBox(height: 16),
 
             // Female Bird Card
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      'Femelle',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.pink,
+            if (cage.female != null)
+              Card(
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'Femelle',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.pink,
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 8),
-                    _buildBirdInfo(cage.female),
-                  ],
+                      const SizedBox(height: 8),
+                      _buildBirdInfo(cage.female!),
+                    ],
+                  ),
                 ),
               ),
-            ),
-            const SizedBox(height: 16),
+            if (cage.female != null) const SizedBox(height: 16),
 
             // Cage Information
             Card(
@@ -84,7 +85,10 @@ class CageDetailsPage extends StatelessWidget {
                     ),
                     const SizedBox(height: 8),
                     if (cage.createdAt != null)
-                      _buildInfoRow('Date de création',formatDate( cage.createdAt!)),
+                      _buildInfoRow(
+                        'Date de création',
+                        cage.formattedCreatedAt,
+                      ),
                     _buildInfoRow('Statut', cage.status ?? 'active'),
                     if (cage.notes != null && cage.notes!.isNotEmpty)
                       _buildInfoRow('Notes', cage.notes!),
@@ -106,7 +110,7 @@ class CageDetailsPage extends StatelessWidget {
         _buildInfoRow('Espèce', bird.species),
         _buildInfoRow('Variété', bird.variety),
         _buildInfoRow('Cage', bird.cage),
-        _buildInfoRow('Date de naissance:',formatDateTime( bird.birthDate)),
+        _buildInfoRow('Date de naissance', bird.birthDate),
         if (bird.price > 0) _buildInfoRow('Prix', '${bird.price} DT'),
       ],
     );

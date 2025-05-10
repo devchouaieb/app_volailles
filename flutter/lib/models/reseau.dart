@@ -8,6 +8,7 @@ class Reseau {
   final String comite;
   final String telephone;
   final String mail;
+  final String registrationYear;
 
   Reseau({
     this.id,
@@ -19,6 +20,7 @@ class Reseau {
     required this.comite,
     required this.telephone,
     required this.mail,
+    required this.registrationYear,
   });
 
   factory Reseau.fromApi(Map<String, dynamic> json) {
@@ -32,6 +34,7 @@ class Reseau {
       comite: json['comite']?.toString() ?? '',
       telephone: json['telephone']?.toString() ?? '',
       mail: json['mail']?.toString() ?? '',
+      registrationYear: json['registrationYear']?.toString() ?? '',
     );
   }
 
@@ -46,6 +49,7 @@ class Reseau {
       'comite': comite,
       'telephone': telephone,
       'mail': mail,
+      'registrationYear': registrationYear,
     };
   }
 
@@ -59,6 +63,7 @@ class Reseau {
     String? comite,
     String? telephone,
     String? mail,
+    String? registrationYear,
   }) {
     return Reseau(
       id: id ?? this.id,
@@ -70,6 +75,7 @@ class Reseau {
       comite: comite ?? this.comite,
       telephone: telephone ?? this.telephone,
       mail: mail ?? this.mail,
+      registrationYear: registrationYear ?? this.registrationYear,
     );
   }
 }

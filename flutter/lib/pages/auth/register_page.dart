@@ -18,6 +18,18 @@ class _RegisterPageState extends State<RegisterPage> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
+  String? _selectedAssociation;
+
+  final List<String> _associations = [
+    'AOB CB',
+    'AON',
+    'AOS',
+    'AOG',
+    'AO GAFSA',
+    'AOK',
+    'AOM',
+    'ADO',
+  ];
 
   bool _isLoading = false;
   bool _obscurePassword = true;
@@ -51,58 +63,6 @@ class _RegisterPageState extends State<RegisterPage> {
     _passwordController.dispose();
     _confirmPasswordController.dispose();
     super.dispose();
-  }
-
-  Future<void> _register() async {
-    if (_formKey.currentState!.validate()) {
-      setState(() {
-        _isLoading = true;
-        _errorMessage = null;
-      });
-
-      try {
-        final registrationSuccess = await _authService.register(
-          _fullNameController.text,
-          _nationalIdController.text,
-          _emailController.text,
-          _passwordController.text,
-        );
-
-        if (!mounted) return;
-
-        if (registrationSuccess) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Inscription réussie! Vous pouvez vous connecter.'),
-              backgroundColor: Colors.green,
-            ),
-          );
-
-          await Future.delayed(const Duration(seconds: 1));
-
-          if (!mounted) return;
-
-          Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (_) => const LoginPage()),
-          );
-        } else {
-          setState(() {
-            _errorMessage =
-                "Échec de l'inscription. Veuillez vérifier vos informations et réessayer.";
-          });
-        }
-      } catch (e) {
-        setState(() {
-          _errorMessage = "Erreur d'inscription: ${e.toString()}";
-        });
-      } finally {
-        if (mounted) {
-          setState(() {
-            _isLoading = false;
-          });
-        }
-      }
-    }
   }
 
   @override
@@ -254,6 +214,38 @@ class _RegisterPageState extends State<RegisterPage> {
                 ),
                 const SizedBox(height: 20),
 
+                // Champ association
+                DropdownButtonFormField<String>(
+                  value: _selectedAssociation,
+                  decoration: InputDecoration(
+                    labelText: "Association",
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    filled: true,
+                    fillColor: Colors.white,
+                  ),
+                  items:
+                      _associations.map((String association) {
+                        return DropdownMenuItem<String>(
+                          value: association,
+                          child: Text(association),
+                        );
+                      }).toList(),
+                  onChanged: (String? newValue) {
+                    setState(() {
+                      _selectedAssociation = newValue;
+                    });
+                  },
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return "Veuillez sélectionner une association";
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 20),
+
                 // Champ mot de passe
                 TextFormField(
                   controller: _passwordController,
@@ -320,7 +312,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     fillColor: Colors.white,
                   ),
                   textInputAction: TextInputAction.done,
-                  onFieldSubmitted: (_) => _register(),
+                  onFieldSubmitted: (_) => _handleRegister(),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return "Veuillez confirmer votre mot de passe";
@@ -338,7 +330,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   width: double.infinity,
                   height: 55,
                   child: ElevatedButton(
-                    onPressed: _isLoading ? null : _register,
+                    onPressed: _isLoading ? null : _handleRegister,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.deepPurple,
                       foregroundColor: Colors.white,
@@ -398,5 +390,49 @@ class _RegisterPageState extends State<RegisterPage> {
         ),
       ),
     );
+  }
+
+  Future<void> _handleRegister() async {
+    if (_formKey.currentState!.validate()) {
+      setState(() {
+        _isLoading = true;
+        _errorMessage = null;
+      });
+
+      try {
+        final success = await _authService.register(
+          _fullNameController.text,
+          _nationalIdController.text,
+          _emailController.text,
+          _passwordController.text,
+          _selectedAssociation!,
+        );
+
+        if (success && mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text(
+                'Inscription réussie ! Vous pouvez maintenant vous connecter.',
+              ),
+              backgroundColor: Colors.green,
+            ),
+          );
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const LoginPage()),
+          );
+        }
+      } catch (e) {
+        setState(() {
+          _errorMessage = e.toString();
+        });
+      } finally {
+        if (mounted) {
+          setState(() {
+            _isLoading = false;
+          });
+        }
+      }
+    }
   }
 }

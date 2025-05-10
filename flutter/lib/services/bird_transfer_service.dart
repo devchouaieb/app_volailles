@@ -7,7 +7,7 @@ class BirdTransferService {
   final _birdService = BirdService();
 
   /// Marks a bird for sale and makes it available for purchase by other users
-  /// 
+  ///
   /// This method updates the bird's status to indicate it's for sale without
   /// immediately transferring ownership
   Future<Bird> markBirdForSale(String birdId, double askingPrice) async {
@@ -33,7 +33,7 @@ class BirdTransferService {
   }
 
   /// Purchases a bird that has been marked for sale
-  /// 
+  ///
   /// This transfers the bird from the seller to the buyer and updates the bird's status
   Future<Bird> purchaseBird(
     String birdId,
@@ -58,13 +58,13 @@ class BirdTransferService {
       if (response is Map) {
         final updatedBird = Bird.fromApi(Map<String, dynamic>.from(response));
         print('✅ Bird purchased successfully: ${updatedBird.identifier}');
-        
-      /*   // Remove the bird from the seller's list by marking it as transferred
+
+        // Remove the bird from the seller's list by marking it as transferred
         await _apiService.put('birds/$birdId/transfer-complete', {
           'transferred': true,
           'transferDate': DateTime.now().toIso8601String(),
-        }); */
-        
+        });
+
         return updatedBird;
       }
 
@@ -109,9 +109,10 @@ class BirdTransferService {
         print('✅ ${birds.length} birds for sale retrieved');
         return birds;
       } else if (response is Map && response['data'] is List) {
-        final birds = (response['data'] as List)
-            .map((json) => Bird.fromApi(json))
-            .toList();
+        final birds =
+            (response['data'] as List)
+                .map((json) => Bird.fromApi(json))
+                .toList();
         print('✅ ${birds.length} birds for sale retrieved');
         return birds;
       }

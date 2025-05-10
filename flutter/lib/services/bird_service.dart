@@ -53,7 +53,7 @@ class BirdService {
         final birds = response.map((json) => Bird.fromApi(json)).toList();
         print('✅ ${birds.length} oiseaux récupérés');
         return birds;
-      }else if (response is Map && response['data'] is List) {
+      } else if (response is Map && response['data'] is List) {
         final birds =
             (response['data'] as List)
                 .map((json) => Bird.fromApi(json))
@@ -89,7 +89,9 @@ class BirdService {
       print('⚠️ Format de réponse invalide: $response');
       return [];
     } catch (e) {
-      print('⚠️ Erreur lors de la récupération des oiseaux vendus par vendeur: $e');
+      print(
+        '⚠️ Erreur lors de la récupération des oiseaux vendus par vendeur: $e',
+      );
       return [];
     }
   }
@@ -97,7 +99,9 @@ class BirdService {
   // Récupérer les oiseaux vendus avec les informations des acheteurs
   Future<List<Bird>> getSoldBirdsWithBuyers() async {
     try {
-      print('🔄 Récupération des oiseaux vendus avec informations acheteurs...');
+      print(
+        '🔄 Récupération des oiseaux vendus avec informations acheteurs...',
+      );
       final response = await _apiService.get('birds/sold/with-buyers');
       print('📦 Réponse API: $response');
 
@@ -113,7 +117,9 @@ class BirdService {
       print('⚠️ Format de réponse invalide: $response');
       return [];
     } catch (e) {
-      print('⚠️ Erreur lors de la récupération des oiseaux vendus par vendeur: $e');
+      print(
+        '⚠️ Erreur lors de la récupération des oiseaux vendus par vendeur: $e',
+      );
       return [];
     }
   }
@@ -264,7 +270,9 @@ class BirdService {
       print('⚠️ Format de réponse invalide: $response');
       return [];
     } catch (e) {
-      print('⚠️ Erreur lors de la récupération des oiseaux disponibles à la vente: $e');
+      print(
+        '⚠️ Erreur lors de la récupération des oiseaux disponibles à la vente: $e',
+      );
       return [];
     }
   }

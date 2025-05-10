@@ -5,6 +5,7 @@ class Association {
   final String email;
   final String address;
   final String number;
+  final String registrationYear;
 
   Association({
     this.id,
@@ -13,6 +14,7 @@ class Association {
     required this.email,
     required this.address,
     required this.number,
+    required this.registrationYear,
   });
 
   factory Association.fromApi(Map<String, dynamic> json) {
@@ -23,6 +25,7 @@ class Association {
       email: json['email']?.toString() ?? '',
       address: json['address']?.toString() ?? '',
       number: json['number']?.toString() ?? '',
+      registrationYear: json['registrationYear']?.toString() ?? '',
     );
   }
 
@@ -34,6 +37,7 @@ class Association {
       'email': email,
       'address': address,
       'number': number,
+      'registrationYear': registrationYear,
     };
   }
 
@@ -44,6 +48,7 @@ class Association {
     String? email,
     String? address,
     String? number,
+    String? registrationYear,
   }) {
     return Association(
       id: id ?? this.id,
@@ -52,6 +57,7 @@ class Association {
       email: email ?? this.email,
       address: address ?? this.address,
       number: number ?? this.number,
+      registrationYear: registrationYear ?? this.registrationYear,
     );
   }
 }

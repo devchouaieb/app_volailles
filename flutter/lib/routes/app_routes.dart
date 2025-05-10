@@ -5,13 +5,20 @@ import 'package:app_volailles/pages/auth/register_page.dart';
 import 'package:app_volailles/pages/auth/forgot_password_page.dart';
 import 'package:app_volailles/pages/auth/reset_password_page.dart';
 import 'package:app_volailles/pages/home_page.dart';
-import 'package:app_volailles/pages/species_page.dart';
-import 'package:app_volailles/pages/statistics_page.dart';
+import 'package:app_volailles/pages/birds_page.dart';
 import 'package:app_volailles/pages/cages_page.dart';
 import 'package:app_volailles/pages/nest_page.dart';
 import 'package:app_volailles/pages/vendues_page.dart';
 import 'package:app_volailles/pages/purchases_page.dart';
+import 'package:app_volailles/pages/birds_for_sale_page.dart';
+import 'package:app_volailles/pages/statistics_page.dart';
+import 'package:app_volailles/pages/associations_page.dart';
+import 'package:app_volailles/pages/reseau_page.dart';
+import 'package:app_volailles/pages/sensor_dashboard_page.dart';
+import 'package:app_volailles/pages/species_page.dart';
 import 'package:app_volailles/services/auth_service.dart';
+import 'package:app_volailles/models/bird.dart';
+import 'package:provider/provider.dart';
 
 class AppRoutes {
   static const String login = '/login';
@@ -24,6 +31,11 @@ class AppRoutes {
   static const String nest = '/nest';
   static const String vendues = '/vendues';
   static const String purchases = '/purchases';
+  static const String sensorDashboard = '/sensor-dashboard';
+  static const String birds = '/birds';
+  static const String birdsForSale = '/birds-for-sale';
+  static const String associations = '/associations';
+  static const String reseau = '/reseau';
 
   static Map<String, WidgetBuilder> getRoutes() {
     return {
@@ -40,11 +52,17 @@ class AppRoutes {
         return ResetPasswordPage(token: token);
       },
       species: (context) => SpeciesPage(),
-      statistics: (context) => StatisticsPage(),
+      statistics:
+          (context) => StatisticsPage(birds: Provider.of<List<Bird>>(context)),
       cages: (context) => const CagesPage(),
       nest: (context) => const NestPage(),
       vendues: (context) => VenduesPage(),
       purchases: (context) => PurchasesPage(),
+      sensorDashboard: (context) => const SensorDashboardPage(),
+      birds: (context) => const BirdsPage(),
+      birdsForSale: (context) => const BirdsForSalePage(),
+      associations: (context) => const AssociationsPage(),
+      reseau: (context) => const ReseauPage(),
     };
   }
 

@@ -28,11 +28,19 @@ class _AddCageDialogState extends State<AddCageDialog> {
     super.initState();
     _males =
         widget.birds
-            .where((bird) => bird.gender.toLowerCase() == Constants.male && bird.cage == "")
+            .where(
+              (bird) =>
+                  bird.gender.toLowerCase() == Constants.male &&
+                  bird.cage == "",
+            )
             .toList();
     _females =
         widget.birds
-            .where((bird) => bird.gender.toLowerCase() == Constants.female && bird.cage == "")
+            .where(
+              (bird) =>
+                  bird.gender.toLowerCase() == Constants.female &&
+                  bird.cage == "",
+            )
             .toList();
   }
 

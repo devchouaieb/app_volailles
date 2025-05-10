@@ -21,6 +21,7 @@ class _AddReseauDialogState extends State<AddReseauDialog> {
   late TextEditingController _comiteController;
   late TextEditingController _telephoneController;
   late TextEditingController _mailController;
+  late TextEditingController _registrationYearController;
 
   @override
   void initState() {
@@ -45,6 +46,9 @@ class _AddReseauDialogState extends State<AddReseauDialog> {
       text: widget.reseau?.telephone ?? '',
     );
     _mailController = TextEditingController(text: widget.reseau?.mail ?? '');
+    _registrationYearController = TextEditingController(
+      text: widget.reseau?.registrationYear ?? '',
+    );
   }
 
   @override
@@ -57,6 +61,7 @@ class _AddReseauDialogState extends State<AddReseauDialog> {
     _comiteController.dispose();
     _telephoneController.dispose();
     _mailController.dispose();
+    _registrationYearController.dispose();
     super.dispose();
   }
 
@@ -72,6 +77,7 @@ class _AddReseauDialogState extends State<AddReseauDialog> {
         comite: _comiteController.text,
         telephone: _telephoneController.text,
         mail: _mailController.text,
+        registrationYear: _registrationYearController.text,
       );
       widget.onSave(reseau);
       Navigator.pop(context);
@@ -168,6 +174,21 @@ class _AddReseauDialogState extends State<AddReseauDialog> {
                   }
                   return null;
                 },
+              ),
+              _buildTextField(
+                label: 'Année d\'enregistrement',
+                icon: Icons.calendar_month,
+                controller: _registrationYearController,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Veuillez entrer l\'année d\'enregistrement';
+                  }
+                  if (int.tryParse(value) == null) {
+                    return 'Veuillez entrer une année valide';
+                  }
+                  return null;
+                },
+                keyboardType: TextInputType.number,
               ),
               _buildTextField(
                 label: 'Adresse',

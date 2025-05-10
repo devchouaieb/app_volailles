@@ -11,6 +11,7 @@ const cagesRoutes = require('./routes/cagesRoutes');
 const nestsRoutes = require('./routes/nestsRoutes');
 const reseauRoutes = require('./routes/reseauRoutes');
 const associationRoutes = require('./routes/associationRoutes');
+const sensorRoutes = require('./routes/sensorRoutes');
 
 // Charger les variables d'environnement
 dotenv.config({ path: './config/config.env' });
@@ -38,6 +39,7 @@ app.use('/api/cages', cagesRoutes);
 app.use('/api/nests', nestsRoutes);
 app.use('/api/reseaux', reseauRoutes);
 app.use('/api/associations', associationRoutes);
+app.use('/api/sensor_data', sensorRoutes);
 
 // Gestion des erreurs 404
 app.use((req, res, next) => {

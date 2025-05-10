@@ -9,7 +9,7 @@ const crypto = require('crypto');
 exports.register = async (req, res, next) => {
   try {
     console.log('Tentative d\'inscription:', req.body);
-    const { fullName, nationalId, email, password } = req.body;
+    const { fullName, nationalId, email, password, association } = req.body;
 
     // Vérifier si l'utilisateur existe déjà
     const existingUser = await User.findOne({
@@ -29,7 +29,8 @@ exports.register = async (req, res, next) => {
       fullName,
       nationalId,
       email,
-      password
+      password,
+      association
     });
 
     console.log('Inscription réussie');

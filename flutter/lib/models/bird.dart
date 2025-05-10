@@ -1,6 +1,4 @@
 // lib/models/bird.dart
-import 'package:app_volailles/models/user.dart';
-
 class Bird {
   final String? id; // Changé de int à String? pour MongoDB _id
   final String identifier;
@@ -18,7 +16,6 @@ class Bird {
   bool forSale; // Indique si l'oiseau est mis en vente
   double? askingPrice; // Prix demandé pour la vente
   String? sellerId; // ID du vendeur original
-  String? userId;
 
   Bird({
     this.id,
@@ -37,7 +34,6 @@ class Bird {
     this.forSale = false,
     this.askingPrice,
     this.sellerId,
-    this.userId
   });
 
   // Conversion pour l'API
@@ -57,10 +53,8 @@ class Bird {
       'buyerInfo': buyerInfo,
       'forSale': forSale,
       'askingPrice': askingPrice,
+      'sellerId': sellerId,
     };
-    if (sellerId !=null){
-      map['seller']= sellerId;
-    }
 
     if (id != null && id!.isNotEmpty) {
       map['_id'] = id;
@@ -90,8 +84,7 @@ class Bird {
               : null,
       forSale: json['forSale'] ?? false,
       askingPrice: json['askingPrice']?.toDouble(),
-      sellerId: json['seller'],
-      userId : json["user"] 
+      sellerId: json['sellerId'],
     );
   }
 

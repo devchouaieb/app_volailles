@@ -2,19 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:app_volailles/models/bird.dart';
 import 'package:app_volailles/services/bird_transfer_service.dart';
 import 'package:app_volailles/services/bird_service.dart';
+import 'package:app_volailles/utils/date_utils.dart';
 
 class BirdsForSalePage extends StatefulWidget {
-  final Map<String, dynamic>? currentUser;
-  const BirdsForSalePage(this.currentUser, {super.key});
+  const BirdsForSalePage({Key? key}) : super(key: key);
 
   @override
   State<BirdsForSalePage> createState() => _BirdsForSalePageState();
 }
 
 class _BirdsForSalePageState extends State<BirdsForSalePage> {
-  final nationalIdController = TextEditingController();
-  final fullNameController = TextEditingController();
-  final phoneController = TextEditingController();
   final BirdTransferService _birdTransferService = BirdTransferService();
   final BirdService _birdService = BirdService();
   List<Bird> _birdsForSale = [];
@@ -24,14 +21,7 @@ class _BirdsForSalePageState extends State<BirdsForSalePage> {
   @override
   void initState() {
     super.initState();
-    _initInputs();
     _loadBirdsForSale();
-  }
-
-  _initInputs() {
-    nationalIdController.text = widget.currentUser?["nationalId"];
-    phoneController.text = widget.currentUser?["phone"] ?? "";
-    fullNameController.text = widget.currentUser?["fullName"];
   }
 
   Future<void> _loadBirdsForSale() async {
@@ -83,7 +73,7 @@ class _BirdsForSalePageState extends State<BirdsForSalePage> {
       );
 
       // Add the purchased bird to the user's collection
-     // await _birdService.createBird(purchasedBird);
+      await _birdService.createBird(purchasedBird);
 
       // Remove the bird from the for sale list
       setState(() {
@@ -119,7 +109,9 @@ class _BirdsForSalePageState extends State<BirdsForSalePage> {
     final priceController = TextEditingController(
       text: bird.askingPrice?.toString() ?? '',
     );
-
+    final nationalIdController = TextEditingController();
+    final fullNameController = TextEditingController();
+    final phoneController = TextEditingController();
     final formKey = GlobalKey<FormState>();
 
     return AlertDialog(
@@ -197,7 +189,7 @@ class _BirdsForSalePageState extends State<BirdsForSalePage> {
         ElevatedButton(
           onPressed: () {
             if (formKey.currentState!.validate()) {
-              Navigator.of(dialogContext).pop({
+              Navigator.of(context).pop({
                 'price': double.parse(priceController.text),
                 'nationalId': nationalIdController.text,
                 'fullName': fullNameController.text,
@@ -270,7 +262,6 @@ class _BirdsForSalePageState extends State<BirdsForSalePage> {
                 itemCount: _birdsForSale.length,
                 itemBuilder: (context, index) {
                   final bird = _birdsForSale[index];
-                  print("${bird.userId} widget : ${widget.currentUser}");
                   return Card(
                     margin: const EdgeInsets.symmetric(
                       horizontal: 16,
@@ -300,17 +291,14 @@ class _BirdsForSalePageState extends State<BirdsForSalePage> {
                           Text('Prix demandé: ${bird.askingPrice} DT'),
                         ],
                       ),
-                      trailing:
-                          widget.currentUser?["id"] == bird.userId
-                              ? SizedBox()
-                              : ElevatedButton(
-                                onPressed: () => _purchaseBird(bird),
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.green,
-                                  foregroundColor: Colors.white,
-                                ),
-                                child: const Text('Acheter'),
-                              ),
+                      trailing: ElevatedButton(
+                        onPressed: () => _purchaseBird(bird),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.green,
+                          foregroundColor: Colors.white,
+                        ),
+                        child: const Text('Acheter'),
+                      ),
                     ),
                   );
                 },

@@ -8,8 +8,7 @@ import 'package:app_volailles/services/bird_service.dart';
 import 'package:app_volailles/utils/date_utils.dart';
 
 class BirdsPage extends StatefulWidget {
-  final String? userId;
-  const BirdsPage(this.userId, {super.key});
+  const BirdsPage({super.key});
 
   @override
   State<BirdsPage> createState() => _BirdsPageState();
@@ -160,8 +159,42 @@ class _BirdsPageState extends State<BirdsPage> {
       builder:
           (dialogContext) => SellBirdDialog(
             bird: bird,
-            onSuccess: (double price, String buyerNationalId) {
-              // Implement sell bird functionality
+            onSuccess: (double price, String buyerNationalId) async {
+              try {
+                setState(() => _isLoading = true);
+
+                // Mettre à jour l'oiseau dans la base de données
+                final soldBird = await _birdService.sellBird(
+                  bird.id!,
+                  price,
+                  buyerNationalId,
+                  'Acheteur',
+                  buyerPhone: '',
+                );
+
+                if (!mounted) return;
+
+                setState(() {
+                  _birds.removeWhere((b) => b.id == bird.id);
+                  _isLoading = false;
+                });
+
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Oiseau vendu avec succès'),
+                    backgroundColor: Colors.green,
+                  ),
+                );
+              } catch (e) {
+                if (!mounted) return;
+                setState(() => _isLoading = false);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('Erreur lors de la vente: $e'),
+                    backgroundColor: Colors.red,
+                  ),
+                );
+              }
             },
           ),
     );
@@ -230,8 +263,7 @@ class _BirdsPageState extends State<BirdsPage> {
   }
 
   Color _getBirdColor(Bird bird) {
-    print(widget.userId);
-    if (bird.sellerId == widget.userId) {
+    if (bird.sold) {
       return Colors.purple.shade300;
     } else if (bird.gender.toLowerCase() == 'male') {
       return Colors.blue.shade100;
@@ -360,9 +392,7 @@ class _BirdsPageState extends State<BirdsPage> {
                                 ),
                               ),
                             const SizedBox(width: 8),
-                            if (!bird.forSale &&
-                                !bird.sold &&
-                                bird.sellerId == null)
+                            if (!bird.forSale && !bird.sold)
                               IconButton(
                                 icon: const Icon(
                                   Icons.sell,
@@ -371,18 +401,13 @@ class _BirdsPageState extends State<BirdsPage> {
                                 onPressed: () => _showMarkForSaleDialog(bird),
                                 tooltip: 'Marquer à Vendre',
                               ),
-                            if (!bird.sold && bird.sellerId == null)
-                              IconButton(
-                                icon: const Icon(
-                                  Icons.delete,
-                                  color: Colors.red,
-                                ),
-                                onPressed: () => _deleteBird(bird),
-                                tooltip: 'Supprimer',
-                              ),
+                            IconButton(
+                              icon: const Icon(Icons.delete, color: Colors.red),
+                              onPressed: () => _deleteBird(bird),
+                              tooltip: 'Supprimer',
+                            ),
                           ],
                         ),
-                        onTap: () => _navigateToAddBirdPage(bird: bird),
                       ),
                     );
                   },

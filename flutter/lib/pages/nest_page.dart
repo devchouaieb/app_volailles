@@ -1,5 +1,3 @@
-import 'package:app_volailles/models/bird.dart';
-import 'package:app_volailles/services/bird_service.dart';
 import 'package:flutter/material.dart';
 import 'package:app_volailles/models/nest.dart';
 import 'package:app_volailles/models/cage.dart';
@@ -18,7 +16,6 @@ class NestPage extends StatefulWidget {
 class _NestPageState extends State<NestPage> {
   final _nestService = NestService();
   final _cageService = CageService();
-   final _birdService = BirdService();
   List<Nest> _nests = [];
   List<Cage> _cages = [];
   bool _isLoading = true;
@@ -101,42 +98,6 @@ class _NestPageState extends State<NestPage> {
         );
       }
     }
-  }
-  Future<void> _addBird(Bird bird)async{
-  if (!mounted) return;
-
-    setState(() => _isLoading = true);
-
-    try {
-    
-       await _birdService.createBird(bird);
-      
-
-      if (!mounted) return;
-
-      setState(() {
-        _isLoading = false;
-      });
-
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Oiseau sauvegardé avec succès'),
-            backgroundColor: Colors.green,
-          ),
-        );
-      }
-    } catch (e) {
-      if (!mounted) return;
-      setState(() => _isLoading = false);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Erreur lors de la sauvegarde: $e'),
-          backgroundColor: Colors.red,
-        ),
-      );
-    }
-  
   }
 
   Future<void> _updateNest(Nest nest) async {
@@ -280,7 +241,6 @@ class _NestPageState extends State<NestPage> {
                   firstBirdExitDate: nest.firstBirdExitDate ?? DateTime.now(),
                 );
                 await _updateNest(updatedNest);
-                await _addBird(bird);
               },
               cage: nest.cageNumber,
             ),

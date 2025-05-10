@@ -51,7 +51,7 @@ class BirdSyncService {
           print('⚠️ Format de réponse invalide: $data');
           return [];
         }
-        
+
         // Filtrer les oiseaux vendus
         final filteredBirds = allBirds.where((bird) => !bird.sold).toList();
         print('✅ ${filteredBirds.length} oiseaux non vendus synchronisés');
@@ -88,7 +88,7 @@ class BirdSyncService {
             print('⚠️ Format de réponse invalide: $data');
             return [];
           }
-          
+
           // Filtrer les oiseaux vendus
           final filteredBirds = allBirds.where((bird) => !bird.sold).toList();
           print('✅ ${filteredBirds.length} oiseaux non vendus synchronisés');
