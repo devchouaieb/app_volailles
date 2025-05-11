@@ -2,8 +2,12 @@ const express = require('express');
 const router = express.Router();
 const { protect } = require('../middleware/auth');
 const associationController = require('../controllers/associationController');
+
 router.use(protect);
+
 // Association routes
+router.get('/selected', associationController.getSelectedAssociation);
+router.put('/year-joined', associationController.updateYearJoined);
 router.post('/', associationController.createAssociation);
 router.get('/', associationController.getAllAssociations);
 router.get('/:id', associationController.getAssociationById);

@@ -1,138 +1,111 @@
-import 'package:app_volailles/models/association.dart';
-import 'package:app_volailles/services/api_service.dart';
+import 'dart:convert';
+import 'package:app_volailles/config/config.dart';
+import 'package:app_volailles/data/associations.dart' as data;
+import 'package:app_volailles/services/auth_service.dart';
+import 'package:http/http.dart' as http;
 
+/// Service pour gérer les opérations liées aux associations
 class AssociationService {
-  final _apiService = ApiService();
+  final AuthService _authService = AuthService();
 
-  // Récupérer toutes les associations
-  Future<List<Association>> getAssociations() async {
+  /// Récupère l'association sélectionnée par l'utilisateur
+  Future<data.Association?> getSelectedAssociation() async {
     try {
-      print('🔄 Récupération des associations...');
-      final response = await _apiService.get('associations');
-      print('📦 Réponse API: $response');
+      final token = await _authService.getToken();
+      if (token == null) return null;
 
-      if (response is List) {
-        final associations =
-            response.map((json) => Association.fromApi(json)).toList();
-        print('✅ ${associations.length} associations récupérées');
-        return associations;
-      } else if (response is Map && response['data'] is List) {
-        final associations =
-            (response['data'] as List)
-                .map((json) => Association.fromApi(json))
-                .toList();
-        print('✅ ${associations.length} associations récupérées');
-        return associations;
+      final response = await http.get(
+        Uri.parse('${Config.baseUrl}/associations/selected'),
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final responseData = json.decode(response.body);
+        if (responseData['data'] != null) {
+          return data.Association.fromJson(responseData['data']);
+        }
       }
-
-      print('⚠️ Format de réponse invalide: $response');
-      throw Exception('Format de réponse invalide');
-    } catch (e) {
-      print('⚠️ Erreur lors de la récupération des associations: $e');
-      rethrow;
-    }
-  }
-
-  // Récupérer une association par ID
-  Future<Association?> getAssociation(String id) async {
-    try {
-      print('🔄 Récupération de l\'association $id...');
-      final response = await _apiService.get('associations/$id');
-      print('📦 Réponse API: $response');
-
-      if (response is Map && response['data'] != null) {
-        final association = Association.fromApi(response['data']);
-        print('✅ Association récupérée avec succès');
-        return association;
-      }
-
-      print('⚠️ Association non trouvée');
       return null;
     } catch (e) {
-      print('⚠️ Erreur lors de la récupération de l\'association: $e');
+      print('Erreur lors de la récupération de l\'association: $e');
       return null;
     }
   }
 
-  // Créer une nouvelle association
-  Future<Association> createAssociation(Association association) async {
+  /// Sélectionne une association pour l'utilisateur
+  Future<bool> selectAssociation(String associationName) async {
     try {
-      print('🔄 Création d\'une nouvelle association...');
-      final response = await _apiService.post(
-        'associations',
-        association.toJson(),
+      final token = await _authService.getToken();
+      if (token == null) return false;
+
+      final response = await http.post(
+        Uri.parse('${Config.baseUrl}/associations/select'),
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
+        body: json.encode({'associationName': associationName}),
       );
-      print('📦 Réponse API: $response');
 
-      if (response is Map) {
-        final createdAssociation = Association.fromApi(
-          Map<String, dynamic>.from(response),
-        );
-        print('✅ Nouvelle association créée: ${createdAssociation.name}');
-        return createdAssociation;
-      }
-
-      print('⚠️ Format de réponse invalide: $response');
-      throw Exception('Format de réponse invalide');
+      return response.statusCode == 200;
     } catch (e) {
-      print('⚠️ Erreur lors de la création de l\'association: $e');
-      rethrow;
+      print('Erreur lors de la sélection de l\'association: $e');
+      return false;
     }
   }
 
-  // Mettre à jour une association
-  Future<Association> updateAssociation(
-    String id,
-    Association association,
-  ) async {
+  /// Met à jour l'année d'enregistrement de l'association
+  Future<bool> updateRegistrationYear(String year) async {
     try {
-      print('🔄 Mise à jour de l\'association $id...');
-      final response = await _apiService.put(
-        'associations/$id',
-        association.toJson(),
+      final token = await _authService.getToken();
+      if (token == null) return false;
+
+      final response = await http.put(
+        Uri.parse('${Config.baseUrl}/associations/year-joined'),
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
+        body: json.encode({'registrationYear': year}),
       );
-      print('📦 Réponse API: $response');
 
-      if (response is Map) {
-        final updatedAssociation = Association.fromApi(
-          Map<String, dynamic>.from(response),
-        );
-        print('✅ Association mise à jour: ${updatedAssociation.name}');
-        return updatedAssociation;
-      }
-
-      print('⚠️ Format de réponse invalide: $response');
-      throw Exception('Format de réponse invalide');
+      return response.statusCode == 200;
     } catch (e) {
-      print('⚠️ Erreur lors de la mise à jour de l\'association: $e');
-      rethrow;
+      print('Erreur lors de la mise à jour de l\'année: $e');
+      return false;
     }
   }
 
-  // Supprimer une association
-  Future<void> deleteAssociation(String id) async {
+  /// Récupère la liste de toutes les associations
+  Future<List<data.Association>> getAllAssociations() async {
     try {
-      print('🔄 Suppression de l\'association $id...');
-      final response = await _apiService.delete('associations/$id');
-      print('📦 Réponse API: $response');
+      final token = await _authService.getToken();
+      if (token == null) return [];
 
-      if (response == null || (response is Map && response['id'] == id)) {
-        print('✅ Association supprimée avec succès');
-        return;
+      final response = await http.get(
+        Uri.parse('${Config.baseUrl}/associations'),
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final responseData = json.decode(response.body);
+        if (responseData['data'] != null) {
+          final List<dynamic> associationsJson = responseData['data'];
+          return associationsJson
+              .map((json) => data.Association.fromJson(json))
+              .toList();
+        }
       }
-
-      print('⚠️ Format de réponse invalide: $response');
-      throw Exception('Format de réponse invalide');
+      return [];
     } catch (e) {
-      print('⚠️ Erreur lors de la suppression de l\'association: $e');
-      if (e.toString().contains('404')) {
-        throw Exception('Association non trouvée');
-      } else if (e.toString().contains('401')) {
-        throw Exception('Non autorisé');
-      } else if (e.toString().contains('500')) {
-        throw Exception('Erreur serveur. Veuillez réessayer plus tard.');
-      }
-      rethrow;
+      print('Erreur lors de la récupération des associations: $e');
+      return [];
     }
   }
 }

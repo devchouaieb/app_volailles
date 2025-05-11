@@ -16,6 +16,7 @@ import 'package:app_volailles/pages/associations_page.dart';
 import 'package:app_volailles/pages/reseau_page.dart';
 import 'package:app_volailles/pages/sensor_dashboard_page.dart';
 import 'package:app_volailles/pages/species_page.dart';
+import 'package:app_volailles/pages/select_association_page.dart';
 import 'package:app_volailles/services/auth_service.dart';
 import 'package:app_volailles/models/bird.dart';
 import 'package:provider/provider.dart';
@@ -36,6 +37,7 @@ class AppRoutes {
   static const String birdsForSale = '/birds-for-sale';
   static const String associations = '/associations';
   static const String reseau = '/reseau';
+  static const String selectAssociation = '/select-association';
 
   static Map<String, WidgetBuilder> getRoutes() {
     return {
@@ -63,6 +65,7 @@ class AppRoutes {
       birdsForSale: (context) => const BirdsForSalePage(),
       associations: (context) => const AssociationsPage(),
       reseau: (context) => const ReseauPage(),
+      selectAssociation: (context) => const SelectAssociationPage(),
     };
   }
 

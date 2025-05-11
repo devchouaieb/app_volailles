@@ -1,7 +1,52 @@
 // backend/controllers/auth.js
 const User = require('../models/user');
+const Association = require('../models/Association');
 const sendEmail = require('../utils/sendEmail');
 const crypto = require('crypto');
+
+// Données prédéfinies des associations
+const ASSOCIATIONS_DATA = {
+  'AOB CB': {
+    phone: '52 919 204',
+    address: 'Route Taniour KM 3',
+    email: 'aossfax@gmail.com'
+  },
+  'AON': {
+    phone: '22 886 342',
+    address: 'Nabeul',
+    email: 'aon.nabeul@gmail.com'
+  },
+  'AOS': {
+    phone: '52 919 204',
+    address: 'Route Taniour KM 3',
+    email: 'aossfax@gmail.com'
+  },
+  'AOG': {
+    phone: '00 000 000',
+    address: 'Gabès',
+    email: 'ass.ornithologique.gabes@gmail.com'
+  },
+  'AO GAFSA': {
+    phone: '00 000 000',
+    address: 'Gafsa',
+    email: 'aogafsa@gmail.com'
+  },
+  'AOK': {
+    phone: '00 000 000',
+    address: 'Kairouan',
+    email: 'aokairouan@gmail.com'
+  },
+  'AOM': {
+    phone: '52 333 773',
+    address: 'Mahdia',
+    email: 'aom-tunisie@gmail.com'
+  },
+  'ADO': {
+    phone: '00 000 000',
+    address: 'Djerba',
+    email: 'ado@gmail.com'
+  }
+};
 
 // @desc    Inscrire un utilisateur
 // @route   POST /api/auth/register
@@ -33,16 +78,45 @@ exports.register = async (req, res, next) => {
       association
     });
 
-    console.log('Inscription réussie');
+    // Récupérer les données de l'association sélectionnée
+    const associationData = ASSOCIATIONS_DATA[association];
+    if (!associationData) {
+      throw new Error('Association invalide');
+    }
+
+    // Créer l'association pour l'utilisateur avec tous les champs requis
+    const newAssociation = {
+      name: association,
+      number: nationalId, // Utiliser le CIN comme numéro d'association
+      phone: associationData.phone,
+      email: associationData.email,
+      address: associationData.address,
+      registrationYear: new Date().getFullYear().toString(), // Champ requis
+      user: user._id
+    };
+
+    console.log('Création de l\'association avec les données:', newAssociation);
+    const createdAssociation = await Association.create(newAssociation);
+    console.log('Association créée:', createdAssociation);
+
     res.status(201).json({
       success: true,
-      message: "Inscription réussie"
+      message: "Inscription réussie",
+      data: {
+        user: {
+          id: user._id,
+          fullName: user.fullName,
+          email: user.email,
+          association: user.association
+        },
+        association: createdAssociation
+      }
     });
   } catch (err) {
     console.error('Erreur lors de l\'inscription:', err);
     res.status(500).json({
       success: false,
-      message: "Erreur lors de l'inscription"
+      message: err.message || "Erreur lors de l'inscription"
     });
   }
 };

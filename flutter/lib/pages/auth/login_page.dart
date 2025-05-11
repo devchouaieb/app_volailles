@@ -4,7 +4,9 @@ import 'package:flutter/services.dart';
 import 'package:app_volailles/pages/auth/register_page.dart';
 import 'package:app_volailles/pages/auth/forgot_password_page.dart';
 import 'package:app_volailles/pages/home_page.dart';
+import 'package:app_volailles/pages/select_association_page.dart';
 import 'package:app_volailles/services/auth_service.dart';
+import 'package:app_volailles/services/association_service.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -17,9 +19,10 @@ class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
   final _nationalIdController = TextEditingController();
   final _passwordController = TextEditingController();
+  final AuthService _authService = AuthService();
+  final AssociationService _associationService = AssociationService();
   bool _isLoading = false;
   bool _obscurePassword = true;
-  final AuthService _authService = AuthService();
   String? _errorMessage;
 
   @override
@@ -60,15 +63,29 @@ class _LoginPageState extends State<LoginPage> {
         if (!mounted) return;
 
         if (loginResult['token'] != null) {
+          // Vérifier si l'utilisateur a une association sélectionnée
+          final association =
+              await _associationService.getSelectedAssociation();
+
+          if (!mounted) return;
+
+          if (association == null || association.registrationYear == null) {
+            // Rediriger vers la page de sélection d'association
+            Navigator.of(context).pushReplacement(
+              MaterialPageRoute(builder: (_) => const SelectAssociationPage()),
+            );
+          } else {
+            // Rediriger vers la page d'accueil
+            Navigator.of(context).pushReplacement(
+              MaterialPageRoute(builder: (_) => const HomePage()),
+            );
+          }
+
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               content: Text('Connexion réussie!'),
               backgroundColor: Colors.green,
             ),
-          );
-
-          Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (_) => const HomePage()),
           );
         } else {
           setState(() {

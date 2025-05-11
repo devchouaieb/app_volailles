@@ -1,16 +1,70 @@
 const Association = require('../models/Association');
 
+// Get selected association for the current user
+exports.getSelectedAssociation = async (req, res) => {
+    try {
+        const association = await Association.findOne({ user: req.user.id });
+        if (!association) {
+            return res.status(404).json({ 
+                success: false,
+                message: 'Aucune association trouvée' 
+            });
+        }
+        res.status(200).json({
+            success: true,
+            data: association
+        });
+    } catch (error) {
+        res.status(500).json({ 
+            success: false,
+            message: error.message 
+        });
+    }
+};
+
+// Update year joined
+exports.updateYearJoined = async (req, res) => {
+    try {
+        const { yearJoined } = req.body;
+        const association = await Association.findOneAndUpdate(
+            { user: req.user.id },
+            { registrationYear: yearJoined.toString() },
+            { new: true }
+        );
+        if (!association) {
+            return res.status(404).json({ 
+                success: false,
+                message: 'Association non trouvée' 
+            });
+        }
+        res.status(200).json({
+            success: true,
+            data: association
+        });
+    } catch (error) {
+        res.status(500).json({ 
+            success: false,
+            message: error.message 
+        });
+    }
+};
+
 // Create a new association
 exports.createAssociation = async (req, res) => {
     try {
-
         const association = await Association.create({ 
             ...req.body, 
-            user: req.user.id });
-
-        res.status(201).json(association);
+            user: req.user.id 
+        });
+        res.status(201).json({
+            success: true,
+            data: association
+        });
     } catch (error) {
-        res.status(400).json({ message: error.message });
+        res.status(400).json({ 
+            success: false,
+            message: error.message 
+        });
     }
 };
 
@@ -18,9 +72,15 @@ exports.createAssociation = async (req, res) => {
 exports.getAllAssociations = async (req, res) => {
     try {
         const associations = await Association.find({ user: req.user.id });
-        res.status(200).json(associations);
+        res.status(200).json({
+            success: true,
+            data: associations
+        });
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        res.status(500).json({ 
+            success: false,
+            message: error.message 
+        });
     }
 };
 
