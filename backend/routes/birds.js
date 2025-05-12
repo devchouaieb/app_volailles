@@ -21,13 +21,7 @@ router.use(protect);
 router.route('/')
   .get(getBirds)
   .post(createBird);
-
-router.route('/:id')
-  .get(getBird)
-  .put(updateBird)
-  .delete(deleteBird);
-
-// Route pour vendre un oiseau
+  // Route pour vendre un oiseau
 router.put('/:id/sell', sellBird);
 
 // Route pour marquer un oiseau en vente
@@ -41,5 +35,13 @@ router.get('/for-sale', getBirdsForSale);
 
 // Route pour obtenir les oiseaux disponibles (non vendus)
 router.get('/available', getBirdsNotSold);
+
+
+router.route('/:id')
+  .get(getBird)
+  .put(updateBird)
+  .delete(deleteBird);
+
+
 
 module.exports = router; 
