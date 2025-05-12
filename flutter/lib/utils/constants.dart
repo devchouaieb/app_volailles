@@ -1,4 +1,4 @@
 class Constants {
-  static const male = "mâle";
-  static const female = "femelle";
+  static const male = "male";
+  static const female = "female";
 }

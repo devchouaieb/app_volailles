@@ -11,6 +11,7 @@ class Nest {
   final int birdsExited;
   final String? status;
   final String? notes;
+  final Cage? cage ;
 
   Nest({
     this.id,
@@ -23,6 +24,7 @@ class Nest {
     this.birdsExited = 0,
     this.status = 'active',
     this.notes,
+    this.cage
   });
 
   factory Nest.fromJson(Map<String, dynamic> json) {
@@ -40,11 +42,12 @@ class Nest {
       birdsExited: json['birdsExited'] ?? 0,
       status: json['status'] ?? 'active',
       notes: json['notes'],
+      cage: json['cage'] != null ? Cage.fromJson( json['cage']) : null
     );
   }
 
   Map<String, dynamic> toJson() {
-    return {
+    return  {
       'cageNumber': cageNumber,
       'numberOfEggs': numberOfEggs,
       'fertilizedEggs': fertilizedEggs,

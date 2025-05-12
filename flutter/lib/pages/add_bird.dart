@@ -1,3 +1,4 @@
+import 'package:app_volailles/models/cage.dart';
 import 'package:app_volailles/utils/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:app_volailles/models/bird.dart';
@@ -6,7 +7,7 @@ import 'package:app_volailles/data/bird_species.dart';
 class AddBirdPage extends StatefulWidget {
   final Function(Bird) onSave;
   final Bird? bird;
-  final String? cage;
+  final Cage? cage;
   final String? sppecie;
 
   const AddBirdPage({
@@ -73,7 +74,7 @@ class _AddBirdPageState extends State<AddBirdPage> {
       }
     } else {
       if (widget.cage != null) {
-        _cage = widget.cage!;
+        _cage = widget.cage!.cageNumber;
       }
       // État par défaut pour les nouveaux oiseaux
       _selectedStatus = 'En bonne santé';
@@ -121,6 +122,8 @@ class _AddBirdPageState extends State<AddBirdPage> {
           cage: _cage.trim(),
           birthDate: _birthDate!.toIso8601String(),
           price: _price,
+          motherId: widget.cage?.female?.id,
+          fatherId: widget.cage?.male?.id
         );
 
         widget.onSave(newBird);

@@ -363,7 +363,7 @@ class _BirdsPageState extends State<BirdsPage> {
                           style: const TextStyle(fontWeight: FontWeight.bold),
                         ),
                         subtitle: Text(
-                          "${bird.species} | ${bird.status} | Age: ${calculateAge(bird.birthDate)}",
+                          "${bird.species} | ${bird.getStatus()} | Age: ${calculateAge(bird.birthDate)}",
                           style: const TextStyle(fontSize: 12),
                         ),
                         trailing: Row(
@@ -397,12 +397,7 @@ class _BirdsPageState extends State<BirdsPage> {
                                 onPressed: () => _showMarkForSaleDialog(bird),
                                 tooltip: 'Marquer à Vendre',
                               ),
-                            IconButton(
-                              icon: const Icon(Icons.delete, color: Colors.red),
-                              onPressed: () => _deleteBird(bird),
-                              tooltip: 'Supprimer',
-                            ),
-                              
+
                             if (!bird.sold)
                               IconButton(
                                 icon: const Icon(

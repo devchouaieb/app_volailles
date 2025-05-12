@@ -1,4 +1,5 @@
 // lib/pages/home_page.dart
+import 'package:app_volailles/pages/bird_details_page.dart';
 import 'package:app_volailles/pages/nest_page.dart';
 import 'package:app_volailles/utils/constants.dart';
 import 'package:flutter/material.dart';
@@ -487,6 +488,13 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  void _navigateToBirdDetailsPage(Bird bird) async {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => BirdDetailsPage(bird: bird)),
+    );
+  }
+
   void _navigateToAddBirdPage({Bird? bird}) async {
     if (!mounted) return;
     final currentContext = context;
@@ -521,7 +529,7 @@ class _HomePageState extends State<HomePage> {
         Navigator.pop(context);
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (_) => const CagesPage()),
+          MaterialPageRoute(builder: (_) => CagesPage(birds: _birds)),
         );
         break;
       case 'Couvés':
@@ -549,7 +557,7 @@ class _HomePageState extends State<HomePage> {
         Navigator.pop(context);
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (_) =>  BirdsForSalePage(_currentUser)),
+          MaterialPageRoute(builder: (_) => BirdsForSalePage(_currentUser)),
         );
         break;
       case 'Statistiques':
@@ -874,6 +882,16 @@ class _HomePageState extends State<HomePage> {
                                         tooltip: 'Vendre',
                                       ),
                                       IconButton(
+                                        onPressed:
+                                            () => _navigateToAddBirdPage(
+                                              bird: bird,
+                                            ),
+                                        icon: const Icon(
+                                          Icons.edit,
+                                          color: Colors.grey,
+                                        ),
+                                      ),
+                                      IconButton(
                                         icon: const Icon(
                                           Icons.delete,
                                           color: Colors.red,
@@ -887,7 +905,7 @@ class _HomePageState extends State<HomePage> {
                                     ],
                                   ),
                                   onTap:
-                                      () => _navigateToAddBirdPage(bird: bird),
+                                      () => _navigateToBirdDetailsPage( bird),
                                 ),
                               );
                             },

@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { protect } = require('../middleware/auth');
 const {
+  getBird,
   getBirds,
   createBird,
   updateBird,
@@ -22,6 +23,7 @@ router.route('/')
   .post(createBird);
 
 router.route('/:id')
+  .get(getBird)
   .put(updateBird)
   .delete(deleteBird);
 

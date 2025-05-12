@@ -142,8 +142,8 @@ class BirdService {
       final response = await _apiService.get('birds/$id');
       print('📦 Réponse API: $response');
 
-      if (response is Map && response['data'] != null) {
-        final bird = Bird.fromApi(response['data']);
+      if (response is Map ) {
+        final bird = Bird.fromApi(Map<String, dynamic>.from(response));
         print('✅ Oiseau récupéré avec succès');
         return bird;
       }

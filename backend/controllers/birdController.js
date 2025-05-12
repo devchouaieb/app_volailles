@@ -1,5 +1,16 @@
 const Bird = require('../models/bird');
 const asyncHandler = require('express-async-handler');
+// @desc    Get  bird
+// @route   GET /api/birds/:id
+// @access  Private
+const getBird = asyncHandler(async (req, res) => {
+  const bird = await Bird.findById(req.params.id);
+  if (!bird) {
+    res.status(404);
+    throw new Error('Bird not found');
+  }
+  res.status(200).json(bird);
+});
 
 // @desc    Get all birds
 // @route   GET /api/birds
@@ -186,6 +197,7 @@ const markBirdForSale = asyncHandler(async (req, res) => {
 });
 
 module.exports = {
+  getBird,
   getBirds,
   createBird,
   updateBird,

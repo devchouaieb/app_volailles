@@ -8,6 +8,11 @@ const asyncHandler = require('express-async-handler');
 const getNests = asyncHandler(async (req, res) => {
   try {
     const nests = await Nest.find({ user: req.user.id })
+      .populate({
+        path: 'cage',
+        populate: [{ path: "male" }, { path: "female", }]
+      })
+
       .sort('-createdAt');
 
     res.status(200).json({
@@ -28,7 +33,10 @@ const getNests = asyncHandler(async (req, res) => {
 // @access  Private
 const getNest = asyncHandler(async (req, res) => {
   try {
-    const nest = await Nest.findById(req.params.id);
+    const nest = await Nest.findById(req.params.id).populate({
+        path: 'cage',
+        populate: [{ path: "male" }, { path: "female", }]
+      });
 
     if (!nest) {
       return res.status(404).json({
@@ -95,12 +103,16 @@ const createNest = asyncHandler(async (req, res) => {
       birdsExited,
       status,
       notes,
-      user: req.user.id
+      user: req.user.id,
+      cage: cage._id
     });
-
+    const createNest = await Nest.findById(nest._id).populate({
+        path: 'cage',
+        populate: [{ path: "male" }, { path: "female", }]
+      });
     res.status(201).json({
       success: true,
-      data: nest
+      data: createNest
     });
   } catch (error) {
     console.error('Error creating nest:', error);
@@ -147,7 +159,10 @@ const updateNest = asyncHandler(async (req, res) => {
     nest = await Nest.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
       runValidators: true
-    });
+    }).populate({
+        path: 'cage',
+        populate: [{ path: "male" }, { path: "female", }]
+      });
 
     res.status(200).json({
       success: true,

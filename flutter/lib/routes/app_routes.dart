@@ -62,7 +62,7 @@ class AppRoutes {
       purchases: (context) => PurchasesPage(),
       sensorDashboard: (context) => const SensorDashboardPage(),
       birds: (context) => const BirdsPage(),
-      birdsForSale: (context) => const BirdsForSalePage(),
+      birdsForSale: (context) =>  BirdsForSalePage(null),
       associations: (context) => const AssociationsPage(),
       reseau: (context) => const ReseauPage(),
       selectAssociation: (context) => const SelectAssociationPage(),

@@ -280,9 +280,10 @@ class _NestPageState extends State<NestPage> {
                   firstBirdExitDate: nest.firstBirdExitDate ?? DateTime.now(),
                 );
                 await _updateNest(updatedNest);
+
                 await _addBird(bird);
               },
-              cage: nest.cageNumber,
+              cage: nest.cage,
             ),
       ),
     );

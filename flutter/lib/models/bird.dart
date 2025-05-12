@@ -1,5 +1,4 @@
 // lib/models/bird.dart
-import 'package:app_volailles/models/user.dart';
 
 class Bird {
   final String? id; // Changé de int à String? pour MongoDB _id
@@ -19,6 +18,9 @@ class Bird {
   double? askingPrice; // Prix demandé pour la vente
   String? sellerId; // ID du vendeur original
   String? userId;
+  String? motherId;
+
+  String? fatherId;
 
   Bird({
     this.id,
@@ -37,7 +39,9 @@ class Bird {
     this.forSale = false,
     this.askingPrice,
     this.sellerId,
-    this.userId
+    this.userId,
+    this.motherId,
+    this.fatherId,
   });
 
   // Conversion pour l'API
@@ -57,14 +61,41 @@ class Bird {
       'buyerInfo': buyerInfo,
       'forSale': forSale,
       'askingPrice': askingPrice,
-      'sellerId': sellerId,
     };
+
+    if (motherId != null) {
+      map["mother"] = motherId;
+    }
+    if (fatherId != null) {
+      map["father"] = fatherId;
+    }
+
+    if (userId != null) {
+      map["user"] = userId;
+    }
+    if (sellerId != null) {
+      map["seller"] = sellerId;
+    }
 
     if (id != null && id!.isNotEmpty) {
       map['_id'] = id;
     }
 
     return map;
+  }
+
+  String getStatus() {
+    if (status == "sold" || sold) {
+      return 'Vendu';
+    } else if (status == "Owned") {
+      return 'Possédé';
+    } else {
+      return status;
+    }
+  }
+
+  bool isAvailable() {
+    return status != "Mort";
   }
 
   // Création depuis la réponse API
@@ -88,8 +119,10 @@ class Bird {
               : null,
       forSale: json['forSale'] ?? false,
       askingPrice: json['askingPrice']?.toDouble(),
-      sellerId: json['sellerId'],
-      userId : json["user"] 
+      sellerId: json['seller'],
+      userId: json["user"],
+      motherId: json["mother"],
+      fatherId: json["father"],
     );
   }
 
