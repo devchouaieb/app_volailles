@@ -62,6 +62,9 @@ class Bird {
       'forSale': forSale,
       'askingPrice': askingPrice,
     };
+    if (sellerId !=null){
+      map['seller']= sellerId;
+    }
 
     if (motherId != null) {
       map["mother"] = motherId;

@@ -58,13 +58,13 @@ class BirdTransferService {
       if (response is Map) {
         final updatedBird = Bird.fromApi(Map<String, dynamic>.from(response));
         print('✅ Bird purchased successfully: ${updatedBird.identifier}');
-
-        // Remove the bird from the seller's list by marking it as transferred
+        
+      /*   // Remove the bird from the seller's list by marking it as transferred
         await _apiService.put('birds/$birdId/transfer-complete', {
           'transferred': true,
           'transferDate': DateTime.now().toIso8601String(),
-        });
-
+        }); */
+        
         return updatedBird;
       }
 

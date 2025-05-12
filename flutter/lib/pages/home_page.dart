@@ -522,7 +522,7 @@ class _HomePageState extends State<HomePage> {
         Navigator.pop(context);
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (_) => const BirdsPage()),
+          MaterialPageRoute(builder: (_) =>  BirdsPage(_currentUser?["id"])),
         );
         break;
       case 'Cages':

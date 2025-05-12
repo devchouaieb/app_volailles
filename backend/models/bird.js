@@ -84,6 +84,11 @@ const BirdSchema = new mongoose.Schema({
     ref: 'Bird',
     required: true
   },
+  seller: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: false
+  },
   createdAt: {
     type: Date,
     default: Date.now
