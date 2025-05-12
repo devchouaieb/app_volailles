@@ -845,7 +845,7 @@ class _HomePageState extends State<HomePage> {
                                     ),
                                   ),
                                   subtitle: Text(
-                                    "${bird.species} | ${bird.status} | Age: ${calculateAge(bird.birthDate)}",
+                                    "${bird.species} | ${bird.getStatus()} | Age: ${calculateAge(bird.birthDate)}",
                                     style: const TextStyle(fontSize: 12),
                                   ),
                                   trailing: Row(
