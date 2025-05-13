@@ -40,7 +40,7 @@ _navigateBack(){
   Future<void> _loadAvailableBirds() async {
     setState(() => _isLoading = true);
     try {
-      final birds = await _birdService.getBirds();
+      final birds = await _birdService.getAvailableBirds();
       _availableBirds = birds.where((bird) => bird.cage == null).toList();
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -346,7 +346,7 @@ _navigateBack(){
           (context) => AlertDialog(
             title: const Text('Supprimer l\'oiseau'),
             content: Text(
-              'Voulez-vous vraiment supprimer l\'oiseau ${bird.identifier} ?',
+              'Voulez-vous vraiment supprimer l\'oiseau ${bird.identifier} du cage ${widget.cage.cageNumber} ?',
             ),
             actions: [
               TextButton(
@@ -367,7 +367,7 @@ _navigateBack(){
     if (confirmed == true) {
       try {
         // Supprimer l'oiseau
-        await birdService.deleteBird(bird.id!);
+        await birdService.updateBirdCage(bird.id!, null,"");
 
         // Mettre à jour la cage
         if (bird.gender == 'male') {
@@ -379,7 +379,7 @@ _navigateBack(){
         // Rafraîchir la page
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Oiseau supprimé avec succès')),
+            const SnackBar(content: Text('Oiseau supprimé du cage avec succès')),
           );
           Navigator.of(context).pop(); // Retour à la page des cages
         }

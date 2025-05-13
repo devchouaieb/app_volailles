@@ -1,29 +1,29 @@
 // lib/pages/home_page.dart
-import 'package:app_volailles/pages/bird_details_page.dart';
-import 'package:app_volailles/pages/nest_page.dart';
-import 'package:app_volailles/utils/constants.dart';
-import 'package:flutter/material.dart';
 import 'package:app_volailles/models/bird.dart';
 import 'package:app_volailles/pages/add_bird.dart';
-import 'package:app_volailles/pages/statistics_page.dart';
-import 'package:app_volailles/pages/cages_page.dart';
-import 'package:app_volailles/pages/vendues_page.dart';
-import 'package:app_volailles/pages/purchases_page.dart';
-import 'package:app_volailles/pages/species_page.dart';
-import 'package:app_volailles/pages/sell_bird_dialog.dart';
-import 'package:app_volailles/pages/mark_for_sale_dialog.dart';
+import 'package:app_volailles/pages/associations_page.dart';
+import 'package:app_volailles/pages/auth/login_page.dart';
+import 'package:app_volailles/pages/bird_details_page.dart';
 import 'package:app_volailles/pages/birds_for_sale_page.dart';
-import 'package:app_volailles/services/bird_transfer_service.dart';
-import 'package:app_volailles/utils/date_utils.dart';
+import 'package:app_volailles/pages/birds_page.dart';
+import 'package:app_volailles/pages/cages_page.dart';
+import 'package:app_volailles/pages/mark_for_sale_dialog.dart';
+import 'package:app_volailles/pages/nest_page.dart';
+import 'package:app_volailles/pages/purchases_page.dart';
+import 'package:app_volailles/pages/reseau_page.dart';
+import 'package:app_volailles/pages/sell_bird_dialog.dart';
+import 'package:app_volailles/pages/sensor_dashboard_page.dart';
+import 'package:app_volailles/pages/species_page.dart';
+import 'package:app_volailles/pages/statistics_page.dart';
+import 'package:app_volailles/pages/vendues_page.dart';
 import 'package:app_volailles/services/auth_service.dart';
 import 'package:app_volailles/services/bird_service.dart';
-import 'package:app_volailles/pages/auth/login_page.dart';
 import 'package:app_volailles/services/bird_sync_service.dart';
+import 'package:app_volailles/services/bird_transfer_service.dart';
+import 'package:app_volailles/utils/constants.dart';
+import 'package:app_volailles/utils/date_utils.dart';
 import 'package:app_volailles/widgets/app_drawer.dart';
-import 'package:app_volailles/pages/birds_page.dart';
-import 'package:app_volailles/pages/associations_page.dart';
-import 'package:app_volailles/pages/reseau_page.dart';
-import 'package:app_volailles/pages/sensor_dashboard_page.dart';
+import 'package:flutter/material.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -232,7 +232,7 @@ class _HomePageState extends State<HomePage> {
           ),
         );
       }
-    } catch ( e ) {
+    } catch (e) {
       if (mounted) {
         setState(() {
           _isLoading = false;
@@ -522,15 +522,29 @@ class _HomePageState extends State<HomePage> {
         Navigator.pop(context);
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (_) =>  BirdsPage(_currentUser?["id"])),
+          MaterialPageRoute(builder: (_) => BirdsPage(_currentUser?["id"])),
         );
         break;
       case 'Cages':
         Navigator.pop(context);
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (_) => CagesPage(birds: _birds)),
+          MaterialPageRoute(
+            builder:
+                (_) => CagesPage(
+                  birds:
+                      _birds
+                          .where(
+                            (bird) =>
+                                !bird.sold &&
+                                !bird.forSale &&
+                                bird.userId == _currentUser?["id"],
+                          )
+                          .toList(),
+                ),
+          ),
         );
+
         break;
       case 'Couvés':
         Navigator.pop(context);
@@ -904,8 +918,7 @@ class _HomePageState extends State<HomePage> {
                                       ),
                                     ],
                                   ),
-                                  onTap:
-                                      () => _navigateToBirdDetailsPage( bird),
+                                  onTap: () => _navigateToBirdDetailsPage(bird),
                                 ),
                               );
                             },

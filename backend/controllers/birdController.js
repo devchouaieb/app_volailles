@@ -6,18 +6,23 @@ const asyncHandler = require('express-async-handler');
 const getBird = asyncHandler(async (req, res) => {
   const bird = await Bird.findById(req.params.id);
   if (!bird) {
-    res.status(404);
-    throw new Error('Bird not found');
+    return res.status(404).json({ success: false, message: "Bird not found" });
+
   }
-  res.status(200).json(bird);
+ return res.status(200).json(bird);
 });
 
 // @desc    Get all birds
 // @route   GET /api/birds
 // @access  Private
 const getBirds = asyncHandler(async (req, res) => {
-  const birds = await Bird.find({ $or: [{ user: req.user.id }, { seller: req.user.id }] });
-  res.status(200).json(birds);
+  const birds = await Bird.find({
+    $and: [
+      { $or: [{ user: req.user.id }, { seller: req.user.id }] },
+      { forSale: false }
+    ]
+  });
+return  res.status(200).json(birds);
 });
 
 // @desc    Create a bird
@@ -45,14 +50,19 @@ const updateBird = asyncHandler(async (req, res) => {
   const bird = await Bird.findById(req.params.id);
 
   if (!bird) {
-    res.status(404);
-    throw new Error('Bird not found');
+    return res.status(404).json({
+      success: false,
+      message: 'Bird not found'
+    });
+
   }
 
   // Make sure the logged in user matches the bird user
   if (bird.user.toString() !== req.user.id) {
-    res.status(400);
-    throw new Error('User not authorized');
+    return res.status(400).json({
+      success: false,
+      message: 'Utilisateur non autorisé'
+    });
   }
 
   const updatedBird = await Bird.findByIdAndUpdate(req.params.id, req.body, {
@@ -60,7 +70,7 @@ const updateBird = asyncHandler(async (req, res) => {
     runValidators: true
   });
 
-  res.status(200).json({ success: true, data: updatedBird });
+  return res.status(200).json({ success: true, data: updatedBird });
 });
 
 // @desc    Delete a bird
@@ -154,15 +164,16 @@ const getBirdsForSale = asyncHandler(async (req, res) => {
   res.status(200).json(birds);
 });
 
-// @desc    Get all birds that are not sold yet
+// @desc    Get all birds that are not sold yet and for sale
 // @route   GET /api/birds/available
 // @access  Private
 const getBirdsNotSold = asyncHandler(async (req, res) => {
   const birds = await Bird.find({
     user: req.user.id,
-    sold: false // Only get birds that are not sold yet
+    forSale : false,
+    sold: false // Only get birds that are not sold yet and for sale
   });
-  res.status(200).json(birds);
+ return res.status(200).json(birds);
 });
 // @desc    Purchase a bird
 // @root    PUT /api/birds/:id/purchase
