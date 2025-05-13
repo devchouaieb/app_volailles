@@ -365,7 +365,7 @@ class _BirdsPageState extends State<BirdsPage> {
                           style: const TextStyle(fontWeight: FontWeight.bold),
                         ),
                         subtitle: Text(
-                          "${bird.species} | ${bird.getStatus()} | Age: ${calculateAge(bird.birthDate)}",
+                          "${bird.species} | ${bird.getStatus(widget.userId)} | Age: ${calculateAge(bird.birthDate)}",
                           style: const TextStyle(fontSize: 12),
                         ),
                         trailing: Row(
@@ -390,9 +390,7 @@ class _BirdsPageState extends State<BirdsPage> {
                                 ),
                               ),
                             const SizedBox(width: 8),
-                            if (!bird.forSale &&
-                                !bird.sold &&
-                                bird.sellerId == null)
+                            if ((!bird.forSale )&& widget.userId == bird.userId)
                               IconButton(
                                 icon: const Icon(
                                   Icons.sell,
@@ -401,7 +399,7 @@ class _BirdsPageState extends State<BirdsPage> {
                                 onPressed: () => _showMarkForSaleDialog(bird),
                                 tooltip: 'Marquer à Vendre',
                               ),
-                            if (!bird.sold && bird.sellerId == null)
+                            if ((!bird.forSale && bird.sellerId == null) && widget.userId == bird.userId)
                               IconButton(
                                 icon: const Icon(
                                   Icons.delete,
@@ -409,7 +407,7 @@ class _BirdsPageState extends State<BirdsPage> {
                                 ),
                                 onPressed: () => _deleteBird(bird),
                                 tooltip: 'Supprimer',
-                              ),
+                              )
                           ],
                         ),
                       ),

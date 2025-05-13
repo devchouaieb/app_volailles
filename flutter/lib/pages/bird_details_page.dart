@@ -5,8 +5,9 @@ import 'package:app_volailles/services/bird_service.dart';
 
 class BirdDetailsPage extends StatefulWidget {
   final Bird bird;
+  final String? userId ;
 
-  const BirdDetailsPage({Key? key, required this.bird}) : super(key: key);
+  const BirdDetailsPage({Key? key, required this.bird , required this.userId}) : super(key: key);
 
   @override
   State<BirdDetailsPage> createState() => _BirdDetailsPageState();
@@ -96,7 +97,7 @@ class _BirdDetailsPageState extends State<BirdDetailsPage> {
         _buildInfoRow('Genre:', bird.gender),
         _buildInfoRow('Espèce:', bird.species),
         _buildInfoRow('Variété:', bird.variety),
-        _buildInfoRow('Statut:', bird.getStatus()),
+        _buildInfoRow('Statut:', bird.getStatus(widget.userId)),
         _buildInfoRow('Cage:', bird.cageNumber),
         _buildInfoColumn("Date de naissance", formatDate(bird.birthDate)),
         _buildInfoRow('Prix:', '${bird.price} €'),
@@ -148,7 +149,7 @@ class _BirdDetailsPageState extends State<BirdDetailsPage> {
   void _navigateToBirdDetailsPage(Bird bird) async {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => BirdDetailsPage(bird: bird)),
+      MaterialPageRoute(builder: (context) => BirdDetailsPage(bird: bird , userId: widget.userId,)),
     );
   }
 

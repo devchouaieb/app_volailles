@@ -9,7 +9,7 @@ const getBird = asyncHandler(async (req, res) => {
     return res.status(404).json({ success: false, message: "Bird not found" });
 
   }
- return res.status(200).json(bird);
+  return res.status(200).json(bird);
 });
 
 // @desc    Get all birds
@@ -22,14 +22,16 @@ const getBirds = asyncHandler(async (req, res) => {
       { forSale: false }
     ]
   });
-return  res.status(200).json(birds);
+  return res.status(200).json(birds);
 });
 
 // @desc    Create a bird
 // @route   POST /api/birds
 // @access  Private
 const createBird = asyncHandler(async (req, res) => {
-  const existingBird = await Bird.find({ identifier: req.body.identifier })
+  const existingBird = await Bird.findOne({ identifier: req.body.identifier })
+  console.log("idendifer", req.body.identifier);
+  console.log("bird", existingBird);
   if (existingBird != null) {
     return res.status(400).json({
       success: false,
@@ -168,12 +170,14 @@ const getBirdsForSale = asyncHandler(async (req, res) => {
 // @route   GET /api/birds/available
 // @access  Private
 const getBirdsNotSold = asyncHandler(async (req, res) => {
+  console.log("userId",req.user.id);
   const birds = await Bird.find({
-    user: req.user.id,
-    forSale : false,
-    sold: false // Only get birds that are not sold yet and for sale
+    $and:
+      [{ user: req.user.id },
+      { forSale: false },
+      { sold: false }] // Only get birds that are not sold yet and for sale
   });
- return res.status(200).json(birds);
+  return res.status(200).json(birds);
 });
 // @desc    Purchase a bird
 // @root    PUT /api/birds/:id/purchase

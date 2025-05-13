@@ -93,7 +93,7 @@ class _HomePageState extends State<HomePage> {
 
       // Load data in batches to prevent UI blocking
       final futures = await Future.wait([
-        _birdSyncService.syncBirds(),
+        _birdService.getAvailableBirds(),
         //     _birdSyncService.checkConflicts(_birds),
         _birdService.getSoldBirds(), // Récupérer également les oiseaux vendus
       ]);
@@ -112,8 +112,8 @@ class _HomePageState extends State<HomePage> {
       if (mounted) {
         setState(() {
           _birds =
-              syncedBirds.where((bird) => !bird.sold && !bird.forSale).toList();
-          _soldBirds = soldBirds.where((bird) => bird.sold).toList();
+              syncedBirds;
+          _soldBirds = soldBirds;
           _isLoading = false;
         });
       }
@@ -491,7 +491,7 @@ class _HomePageState extends State<HomePage> {
   void _navigateToBirdDetailsPage(Bird bird) async {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => BirdDetailsPage(bird: bird)),
+      MaterialPageRoute(builder: (context) => BirdDetailsPage(bird: bird ,userId: _currentUser?["id"],)),
     );
   }
 
@@ -859,7 +859,7 @@ class _HomePageState extends State<HomePage> {
                                     ),
                                   ),
                                   subtitle: Text(
-                                    "${bird.species} | ${bird.getStatus()} | Age: ${calculateAge(bird.birthDate)}",
+                                    "${bird.species} | ${bird.getStatus(_currentUser?["id"])} | Age: ${calculateAge(bird.birthDate)}",
                                     style: const TextStyle(fontSize: 12),
                                   ),
                                   trailing: Row(

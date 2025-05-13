@@ -92,10 +92,10 @@ class Bird {
     return map;
   }
 
-  String getStatus() {
-    if (status == "sold" || sold) {
+  String getStatus(String? currentUserId) {
+    if (status == "sold" || sold || currentUserId == sellerId) {
       return 'Vendu';
-    } else if (status == "Owned") {
+    } else if (status == "Owned" || currentUserId == userId) {
       return 'Possédé';
     } else {
       return status;
