@@ -232,7 +232,7 @@ class _HomePageState extends State<HomePage> {
           ),
         );
       }
-    } catch (e) {
+    } catch ( e ) {
       if (mounted) {
         setState(() {
           _isLoading = false;
@@ -290,7 +290,7 @@ class _HomePageState extends State<HomePage> {
         variety: bird.variety,
         gender: bird.gender,
         birthDate: bird.birthDate,
-        cage: bird.cage,
+        cageNumber: bird.cageNumber,
         status: 'Vendu',
         price: price,
         sold: true,
@@ -971,7 +971,7 @@ class BirdSearchDelegate extends SearchDelegate<Bird?> {
           return bird.identifier.toLowerCase().contains(query.toLowerCase()) ||
               bird.species.toLowerCase().contains(query.toLowerCase()) ||
               bird.variety.toLowerCase().contains(query.toLowerCase()) ||
-              bird.cage.toLowerCase().contains(query.toLowerCase());
+              bird.cageNumber.toLowerCase().contains(query.toLowerCase());
         }).toList();
 
     // Trier les résultats
@@ -984,7 +984,7 @@ class BirdSearchDelegate extends SearchDelegate<Bird?> {
         return ListTile(
           title: Text(bird.identifier),
           subtitle: Text(
-            '${bird.species} | ${bird.gender} | Cage: ${bird.cage}',
+            '${bird.species} | ${bird.gender} | Cage: ${bird.cageNumber}',
           ),
           leading: Icon(
             Icons.pets,

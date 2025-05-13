@@ -7,7 +7,8 @@ class Bird {
   String species;
   String variety;
   String status;
-  String cage;
+  String cageNumber;
+  String? cage ;
   String birthDate;
   double price;
   bool sold;
@@ -29,7 +30,8 @@ class Bird {
     required this.species,
     required this.variety,
     required this.status,
-    required this.cage,
+    required this.cageNumber,
+    this.cage,
     required this.birthDate,
     this.price = 0.0,
     this.sold = false,
@@ -52,7 +54,7 @@ class Bird {
       'species': species,
       'variety': variety,
       'status': status,
-      'cage': cage,
+      'cageNumber': cageNumber,
       'birthDate': birthDate,
       'price': price,
       'sold': sold,
@@ -62,6 +64,9 @@ class Bird {
       'forSale': forSale,
       'askingPrice': askingPrice,
     };
+    if(cage !=null){
+      map['cage']= cage;
+    }
     if (sellerId !=null){
       map['seller']= sellerId;
     }
@@ -110,7 +115,8 @@ class Bird {
       species: json['species'],
       variety: json['variety'] ?? '',
       status: json['status'] ?? 'active',
-      cage: json['cage'] ?? '',
+      cageNumber: json['cageNumber'] ?? '',
+      cage: json['cage'],
       birthDate: json['birthDate'],
       price: json['price']?.toDouble() ?? 0.0,
       sold: json['sold'] ?? false,
@@ -155,7 +161,7 @@ class Bird {
       species: species ?? this.species,
       variety: variety ?? this.variety,
       status: status ?? this.status,
-      cage: cage ?? this.cage,
+      cageNumber: cage ?? this.cageNumber,
       birthDate: birthDate ?? this.birthDate,
       price: price ?? this.price,
       sold: sold ?? this.sold,

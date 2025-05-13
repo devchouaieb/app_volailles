@@ -58,8 +58,8 @@ const createCage = asyncHandler(async (req, res) => {
     // Create the cage
     const cage = await Cage.create({
       cageNumber,
-      male: maleBird,
-      female: femaleBird,
+      male: maleId,
+      female: femaleId,
       species,
       notes,
       user: req.user.id
@@ -81,6 +81,34 @@ const createCage = asyncHandler(async (req, res) => {
       message: 'Erreur lors de la création de la cage'
     });
   }
+});
+
+// @desc    Update a cage
+// @route   PUT /api/cages/:id
+// @access  Private
+const updateCage = asyncHandler(async (req, res) => {
+  const cage = await Cage.findById(req.params.id);
+
+  if (!cage) {
+    return res.status(404).json({
+      success: false,
+      message: 'Cage not found'
+    });
+
+  }
+
+  // Make sure the logged in user matches the cage user
+  if (cage.user.toString() !== req.user.id) {
+    return res.status(400).json({ success: false, message: 'Non autorisé à mis a jour ce cage' });
+
+  }
+
+  const updatedCage = await Cage.findByIdAndUpdate(req.params.id, req.body, {
+    new: true,
+    runValidators: true
+  });
+
+  return res.status(200).json({ success: true, data: updatedCage });
 });
 
 // @desc    Delete a cage
@@ -124,5 +152,6 @@ const deleteCage = asyncHandler(async (req, res) => {
 module.exports = {
   getCages,
   createCage,
+  updateCage,
   deleteCage
 }; 

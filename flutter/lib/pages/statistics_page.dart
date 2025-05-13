@@ -25,7 +25,7 @@ class StatisticsPage extends StatelessWidget {
     // Calculer les statistiques par cage
     final cageCount = <String, int>{};
     for (var bird in birds) {
-      cageCount[bird.cage] = (cageCount[bird.cage] ?? 0) + 1;
+      cageCount[bird.cageNumber] = (cageCount[bird.cageNumber] ?? 0) + 1;
     }
 
     // Calculer les statistiques par âge

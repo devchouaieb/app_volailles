@@ -5,7 +5,8 @@ const BirdSchema = new mongoose.Schema({
   identifier: {
     type: String,
     required: [true, "Identifier is required"],
-    trim: true
+    unique: true,
+    trim: true,
   },
   species: {
     type: String,
@@ -68,6 +69,15 @@ const BirdSchema = new mongoose.Schema({
       type: String,
       trim: true
     }
+  },
+  cageNumber: {
+    type:String,
+    trim:true
+  },
+  cage: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Cage',
+    required: false
   },
   user: {
     type: mongoose.Schema.Types.ObjectId,

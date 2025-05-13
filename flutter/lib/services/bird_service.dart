@@ -164,16 +164,19 @@ class BirdService {
       final response = await _apiService.post('birds', jsonData);
       print('📦 Réponse API: $response');
 
-      if (response is Map) {
+      if (response['success'] == true)  {
         final data = response['data'] ?? response;
         final createdBird = Bird.fromApi(Map<String, dynamic>.from(data));
         print('✅ Nouvel oiseau créé: ${createdBird.identifier}');
         return createdBird;
+      } else {
+        print('⚠️ Erreur lors de la création de l\'oiseau: ${response['message']}');
+        throw Exception(response['message']);
       }
 
       print('⚠️ Format de réponse invalide: $response');
       throw Exception('Format de réponse invalide');
-    } catch (e) {
+    } catch (e ) {
       print('⚠️ Erreur lors de la création de l\'oiseau: $e');
       rethrow;
     }
@@ -317,6 +320,23 @@ class BirdService {
     } catch (e) {
       print('⚠️ Erreur lors de la récupération des oiseaux disponibles: $e');
       return [];
+    }
+  }
+
+  // Mettre à jour la cage d'un oiseau
+  Future<void> updateBirdCage(String birdId, String? cageId ,String cageNumber) async {
+    try {
+      print('🔄 Mise à jour de la cage de l\'oiseau $birdId...');
+      final response = await _apiService.put('birds/$birdId', {
+        'cage': cageId,
+        'cageNumber': cageNumber,
+      });
+      if (response['success'] != true) {
+        throw Exception('Failed to update bird cage: ${response['message']}');
+      }
+    } catch (e) {
+      print('Error in updateBirdCage: $e');
+      throw Exception('Error updating bird cage: $e');
     }
   }
 }

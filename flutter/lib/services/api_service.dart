@@ -153,16 +153,15 @@ class ApiService {
 
       print('📊 Code de statut: ${response.statusCode}');
       print('📦 Réponse brute: ${response.body}');
-
+      final decodedResponse = jsonDecode(response.body);
       if (response.statusCode == 200 || response.statusCode == 201) {
-        final decodedResponse = jsonDecode(response.body);
         print('📦 Réponse décodée: $decodedResponse');
         return decodedResponse;
       } else if (response.statusCode == 401) {
         await _authService.logout();
         throw Exception('Session expirée. Veuillez vous reconnecter.');
       } else {
-        throw Exception('Erreur lors de la requête: ${response.statusCode}');
+        throw Exception(decodedResponse['message'] ?? 'Erreur lors de la requête: ${response.statusCode}');
       }
     } catch (e) {
       print('⚠️ Erreur réseau: $e');

@@ -66,14 +66,14 @@ class _CagesPageState extends State<CagesPage> {
       setState(() {
         _cages.add(newCage);
         if (newCage.male?.id != null) {
-          widget.birds.firstWhere((bird) => bird.id == newCage.male!.id).cage =
+          widget.birds.firstWhere((bird) => bird.id == newCage.male!.id).cageNumber =
               newCage.cageNumber;
         }
         if (newCage.female?.id != null) {
           widget
               .birds
               .firstWhere((bird) => bird.id == newCage.female!.id)
-              .cage = newCage.cageNumber;
+              .cageNumber = newCage.cageNumber;
         }
         _isLoading = false;
       });
@@ -292,13 +292,21 @@ class _CagesPageState extends State<CagesPage> {
                           icon: const Icon(Icons.delete, color: Colors.red),
                           onPressed: () => _deleteCage(cage),
                         ),
-                        onTap: () {
-                          Navigator.push(
+                        onTap: () async {
+                          await Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (_) => CageDetailsPage(cage: cage),
+                              builder: (_) => CageDetailsPage(
+                                cage: cage,
+                                availableCages: _cages,
+                                onCageUpdated: () {
+                                  _loadCages();
+                                },
+                              ),
                             ),
                           );
+                          // Refresh cages after returning from details page
+                          _loadCages();
                         },
                       ),
                     );

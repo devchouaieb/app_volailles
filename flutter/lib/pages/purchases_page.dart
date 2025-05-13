@@ -75,7 +75,7 @@ class _PurchasesPageState extends State<PurchasesPage> {
         variety: _selectedVariety,
         gender: _gender,
         birthDate: _birthDate?.toIso8601String() ?? '',
-        cage: _cageController.text,
+        cageNumber: _cageController.text,
         price: double.tryParse(_priceController.text) ?? 0.0,
         status: _selectedStatus,
       );

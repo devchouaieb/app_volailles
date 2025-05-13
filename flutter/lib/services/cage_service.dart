@@ -1,6 +1,5 @@
-import 'package:flutter/material.dart';
-import 'package:app_volailles/models/cage.dart';
 import 'package:app_volailles/models/bird.dart';
+import 'package:app_volailles/models/cage.dart';
 import 'package:app_volailles/services/api_service.dart';
 
 class CageService {
@@ -8,6 +7,7 @@ class CageService {
 
   Future<List<Cage>> getCages() async {
     try {
+      print(' Récupération des cages...');
       print('🔄 Récupération des cages...');
       final response = await _apiService.get('cages');
       print('📦 Réponse API: $response');
@@ -65,6 +65,25 @@ class CageService {
     } catch (e) {
       print('Error in deleteCage: $e');
       throw Exception('Error deleting cage: $e');
+    }
+  }
+
+  Future<void> updateCageBirds(
+    String cageId, {
+    Bird? male,
+    Bird? female,
+  }) async {
+    try {
+      final response = await _apiService.put('cages/$cageId', {
+        'male': male?.id,
+        'female': female?.id,
+      });
+      if (response['success'] != true) {
+        throw Exception('Failed to update cage birds: ${response['message']}');
+      }
+    } catch (e) {
+      print('Error in updateCageBirds: $e');
+      throw Exception('Error updating cage birds: $e');
     }
   }
 }

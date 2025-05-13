@@ -97,7 +97,7 @@ class _BirdDetailsPageState extends State<BirdDetailsPage> {
         _buildInfoRow('Espèce:', bird.species),
         _buildInfoRow('Variété:', bird.variety),
         _buildInfoRow('Statut:', bird.getStatus()),
-        _buildInfoRow('Cage:', bird.cage),
+        _buildInfoRow('Cage:', bird.cageNumber),
         _buildInfoColumn("Date de naissance", formatDate(bird.birthDate)),
         _buildInfoRow('Prix:', '${bird.price} €'),
         if (bird.sold) ...[

@@ -61,7 +61,7 @@ class _AddBirdPageState extends State<AddBirdPage> {
       _selectedStatus = _convertOldStatusToNew(
         b.status,
       ); // Conversion de l'état
-      _cage = b.cage;
+      _cage = b.cageNumber;
       _birthDate = DateTime.tryParse(b.birthDate);
       _price = b.price;
 
@@ -119,7 +119,7 @@ class _AddBirdPageState extends State<AddBirdPage> {
           species: _selectedSpecies!,
           variety: _selectedVariety.trim(),
           status: _selectedStatus!,
-          cage: _cage.trim(),
+          cageNumber: _cage.trim(),
           birthDate: _birthDate!.toIso8601String(),
           price: _price,
           motherId: widget.cage?.female?.id,

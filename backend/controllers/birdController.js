@@ -24,11 +24,18 @@ const getBirds = asyncHandler(async (req, res) => {
 // @route   POST /api/birds
 // @access  Private
 const createBird = asyncHandler(async (req, res) => {
+  const existingBird = await Bird.find({ identifier: req.body.identifier })
+  if (existingBird != null) {
+    return res.status(400).json({
+      success: false,
+      message: 'Cet identifiant existe déjà'
+    });
+  }
   const bird = await Bird.create({
     ...req.body,
     user: req.user.id
   });
-  res.status(201).json(bird);
+  res.status(201).json({ success: true, data: bird });
 });
 
 // @desc    Update a bird
@@ -44,7 +51,7 @@ const updateBird = asyncHandler(async (req, res) => {
 
   // Make sure the logged in user matches the bird user
   if (bird.user.toString() !== req.user.id) {
-    res.status(401);
+    res.status(400);
     throw new Error('User not authorized');
   }
 
@@ -53,7 +60,7 @@ const updateBird = asyncHandler(async (req, res) => {
     runValidators: true
   });
 
-  res.status(200).json(updatedBird);
+  res.status(200).json({ success: true, data: updatedBird });
 });
 
 // @desc    Delete a bird

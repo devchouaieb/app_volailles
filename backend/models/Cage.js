@@ -10,12 +10,12 @@ const CageSchema = new mongoose.Schema({
   male: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Bird',
-    required: [true, "L'oiseau mâle est obligatoire"]
+    required: false
   },
   female: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Bird',
-    required: [true, "L'oiseau femelle est obligatoire"]
+    required: false
   },
   species: {
     type: String,

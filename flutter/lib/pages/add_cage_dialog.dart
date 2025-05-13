@@ -31,7 +31,7 @@ class _AddCageDialogState extends State<AddCageDialog> {
             .where(
               (bird) =>
                   bird.gender.toLowerCase() == Constants.male &&
-                  bird.cage == "",
+                  bird.cageNumber == "",
             )
             .toList();
     _females =
@@ -39,7 +39,7 @@ class _AddCageDialogState extends State<AddCageDialog> {
             .where(
               (bird) =>
                   bird.gender.toLowerCase() == Constants.female &&
-                  bird.cage == "",
+                  bird.cageNumber == "",
             )
             .toList();
   }
