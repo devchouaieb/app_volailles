@@ -94,7 +94,7 @@ class AppDrawer extends StatelessWidget {
             'Vendues',
             trailing: soldBirds.isNotEmpty ? soldBirds.length.toString() : null,
           ),
-          _buildDrawerItem(Icons.shopping_cart, 'Achats'),
+       //   _buildDrawerItem(Icons.shopping_cart, 'Achats'),
           _buildDrawerItem(Icons.store, 'Oiseaux à vendre'),
           _buildDrawerItem(Icons.bar_chart, 'Statistiques'),
           _buildDrawerItem(Icons.device_hub, 'Espèces'),

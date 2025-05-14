@@ -57,7 +57,7 @@ class _AddBirdPageState extends State<AddBirdPage> {
       _identifier = b.identifier;
       _gender = b.gender;
       _selectedSpecies = b.species;
-      _selectedVariety = b.variety;
+      _selectedVariety = b.color;
       _selectedStatus = _convertOldStatusToNew(
         b.status,
       ); // Conversion de l'état
@@ -116,8 +116,9 @@ class _AddBirdPageState extends State<AddBirdPage> {
           id: widget.bird?.id,
           identifier: _identifier.trim(),
           gender: _gender,
+          category: _selectedCategory!,
           species: _selectedSpecies!,
-          variety: _selectedVariety.trim(),
+          color: _selectedVariety.trim(),
           status: _selectedStatus!,
           cageNumber: _cage.trim(),
           birthDate: _birthDate!.toIso8601String(),
@@ -279,12 +280,12 @@ class _AddBirdPageState extends State<AddBirdPage> {
               validator: (value) => value == null ? 'Champ requis' : null,
               onChanged: (value) => setState(() => _selectedStatus = value),
             ),
-            const SizedBox(height: 16),
+          /*  const SizedBox(height: 16),
             TextFormField(
               initialValue: _cage,
               decoration: const InputDecoration(labelText: 'Cage'),
               onSaved: (value) => _cage = value ?? '',
-            ),
+            ),*/
             const SizedBox(height: 16),
             if (widget.bird != null)
               TextFormField(

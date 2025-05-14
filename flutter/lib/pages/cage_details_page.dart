@@ -87,7 +87,7 @@ _navigateBack(){
                   final bird = availableBirdsOfGender[index];
                   return ListTile(
                     title: Text(bird.identifier),
-                    subtitle: Text('${bird.species} - ${bird.variety}'),
+                    subtitle: Text('${bird.species} - ${bird.color}'),
                     onTap: () => Navigator.of(context).pop(bird),
                   );
                 },
@@ -476,11 +476,13 @@ _navigateBack(){
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _buildInfoRow('Identifiant', bird.identifier),
+        _buildInfoRow('Categorie', bird.category),
         _buildInfoRow('Espèce', bird.species),
-        _buildInfoRow('Variété', bird.variety),
+        _buildInfoRow('Couleur', bird.color),
         _buildInfoRow('Cage', bird.cageNumber),
         _buildInfoRow('Date de naissance:', formatDateTime(bird.birthDate)),
         if (bird.price > 0) _buildInfoRow('Prix', '${bird.price} DT'),
+        _buildStatusRow('État ', bird.isAvailable()),
       ],
     );
   }
@@ -502,6 +504,31 @@ _navigateBack(){
             ),
           ),
           Expanded(child: Text(value)),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildStatusRow(String label, bool available) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            width: 120,
+            child: Text(
+              label,
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                color: Colors.grey,
+              ),
+            ),
+          ),
+          Expanded(child: Text( available ? 'Disponible' : 'Non disponible' , style:  TextStyle(
+            fontWeight: FontWeight.bold,
+            color: available ? Colors.green : Colors.red,
+          ),)),
         ],
       ),
     );

@@ -115,7 +115,7 @@ class _VenduesPageState extends State<VenduesPage> {
                       contentPadding: const EdgeInsets.all(16),
                       leading: CircleAvatar(
                         backgroundColor: Colors.deepPurple.shade100,
-                        child: const Icon(Icons.pets, color: Colors.deepPurple),
+                        child: Icon(Icons.pets, color: ( bird.gender == "male") ? Colors.blue : Colors.red),
                       ),
                       title: Text(
                         bird.identifier,
@@ -129,8 +129,19 @@ class _VenduesPageState extends State<VenduesPage> {
                         children: [
                           const SizedBox(height: 4),
                           Text('Espèce: ${bird.species}'),
-                          Text('Variété: ${bird.variety}'),
-                          Text('Prix de vente: ${bird.soldPrice} DT'),
+                          Text('Variété: ${bird.color}'),
+                          Row(
+                            children: [
+                              Text('Prix de vente: '),
+                              Text(
+                                "${bird.soldPrice ?? bird.price} DT",
+                                style: const TextStyle(
+                                  color: Colors.green,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              )
+                            ],
+                          ),
                           if (bird.soldDate != null)
                             Text(
                               'Date de vente: ${formatDate(bird.soldDate!)}',

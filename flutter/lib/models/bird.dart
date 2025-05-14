@@ -4,8 +4,9 @@ class Bird {
   final String? id; // Changé de int à String? pour MongoDB _id
   final String identifier;
   String gender;
+  String category ;
   String species;
-  String variety;
+  String color;
   String status;
   String cageNumber;
   String? cage ;
@@ -27,8 +28,9 @@ class Bird {
     this.id,
     required this.identifier,
     required this.gender,
+    required this.category,
     required this.species,
-    required this.variety,
+    required this.color,
     required this.status,
     required this.cageNumber,
     this.cage,
@@ -51,8 +53,9 @@ class Bird {
     final map = {
       'identifier': identifier,
       'gender': gender,
+      'category': category,
       'species': species,
-      'variety': variety,
+      'color': color,
       'status': status,
       'cageNumber': cageNumber,
       'birthDate': birthDate,
@@ -112,8 +115,9 @@ class Bird {
       id: json['_id'],
       identifier: json['identifier'],
       gender: json['gender'] ?? 'unknown',
-      species: json['species'],
-      variety: json['variety'] ?? '',
+      category: json['category'] ?? '',
+      species: json['species'] ?? '',
+      color: json['color'] ?? '',
       status: json['status'] ?? 'active',
       cageNumber: json['cageNumber'] ?? '',
       cage: json['cage'],
@@ -140,8 +144,9 @@ class Bird {
     String? id,
     String? identifier,
     String? gender,
+    String? category,
     String? species,
-    String? variety,
+    String? color,
     String? status,
     String? cage,
     String? birthDate,
@@ -158,8 +163,9 @@ class Bird {
       id: id ?? this.id,
       identifier: identifier ?? this.identifier,
       gender: gender ?? this.gender,
+      category: category ?? this.category,
       species: species ?? this.species,
-      variety: variety ?? this.variety,
+      color: color ?? this.color,
       status: status ?? this.status,
       cageNumber: cage ?? this.cageNumber,
       birthDate: birthDate ?? this.birthDate,

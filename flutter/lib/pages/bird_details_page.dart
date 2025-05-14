@@ -95,20 +95,21 @@ class _BirdDetailsPageState extends State<BirdDetailsPage> {
       children: [
         _buildInfoRow('Identifiant:', bird.identifier),
         _buildInfoRow('Genre:', bird.gender),
+        _buildInfoRow('Categorie:', bird.category),
         _buildInfoRow('Espèce:', bird.species),
-        _buildInfoRow('Variété:', bird.variety),
-        _buildInfoRow('Statut:', bird.getStatus(widget.userId)),
+        _buildInfoRow('Couleur:', bird.color),
+       _buildInfoRow('Statut:', bird.getStatus(widget.userId)),
         _buildInfoRow('Cage:', bird.cageNumber),
         _buildInfoColumn("Date de naissance", formatDate(bird.birthDate)),
-        _buildInfoRow('Prix:', '${bird.price} €'),
+     /*   _buildInfoRow('Prix:', '${bird.price} €'),
         if (bird.sold) ...[
           _buildInfoRow('Date de vente:', bird.soldDate ?? 'N/A'),
           _buildInfoRow('Prix de vente:', '${bird.soldPrice ?? 0} €'),
           if (bird.buyerInfo != null)
             _buildInfoRow('Acheteur:', bird.buyerInfo!['fullName'] ?? 'N/A'),
-        ],
-        if (bird.forSale)
-          _buildInfoRow('Prix demandé:', '${bird.askingPrice ?? 0} €'),
+        ],*/
+      /*  if (bird.forSale)
+          _buildInfoRow('Prix demandé:', '${bird.askingPrice ?? 0} €'),*/
       ],
     );
   }

@@ -71,8 +71,9 @@ class _PurchasesPageState extends State<PurchasesPage> {
 
       final bird = Bird(
         identifier: _identifierController.text,
+        category: 'bird',
         species: _selectedSpecies!,
-        variety: _selectedVariety,
+        color: _selectedVariety,
         gender: _gender,
         birthDate: _birthDate?.toIso8601String() ?? '',
         cageNumber: _cageController.text,

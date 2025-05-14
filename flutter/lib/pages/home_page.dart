@@ -286,8 +286,9 @@ class _HomePageState extends State<HomePage> {
       final updatedBird = Bird(
         id: bird.id,
         identifier: bird.identifier,
+        category: bird.category,
         species: bird.species,
-        variety: bird.variety,
+        color: bird.color,
         gender: bird.gender,
         birthDate: bird.birthDate,
         cageNumber: bird.cageNumber,
@@ -865,7 +866,7 @@ class _HomePageState extends State<HomePage> {
                                   trailing: Row(
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
-                                      if (bird.price > 0)
+                                      if ((bird.soldPrice ?? 0) > 0)
                                         Container(
                                           padding: const EdgeInsets.symmetric(
                                             horizontal: 8,
@@ -878,15 +879,15 @@ class _HomePageState extends State<HomePage> {
                                             ),
                                           ),
                                           child: Text(
-                                            "${bird.price} DT",
+                                            "${bird.soldPrice} DT",
                                             style: const TextStyle(
-                                              color: Colors.green,
+                                              color: Colors.red,
                                               fontWeight: FontWeight.bold,
                                             ),
                                           ),
                                         ),
                                       const SizedBox(width: 8),
-                                      IconButton(
+                                 bird.isAvailable() ?     IconButton(
                                         icon: const Icon(
                                           Icons.sell,
                                           color: Colors.deepPurple,
@@ -894,8 +895,8 @@ class _HomePageState extends State<HomePage> {
                                         onPressed:
                                             () => _showMarkForSaleDialog(bird),
                                         tooltip: 'Vendre',
-                                      ),
-                                      IconButton(
+                                      ) : const SizedBox(),
+                                 bird.isAvailable() ?     IconButton(
                                         onPressed:
                                             () => _navigateToAddBirdPage(
                                               bird: bird,
@@ -904,8 +905,8 @@ class _HomePageState extends State<HomePage> {
                                           Icons.edit,
                                           color: Colors.grey,
                                         ),
-                                      ),
-                                      IconButton(
+                                      ) : const SizedBox(),
+                                  /*     bird.isAvailable() ? IconButton(
                                         icon: const Icon(
                                           Icons.delete,
                                           color: Colors.red,
@@ -915,7 +916,7 @@ class _HomePageState extends State<HomePage> {
                                               bird,
                                             ),
                                         tooltip: 'Supprimer',
-                                      ),
+                                      ) : const SizedBox(), */
                                     ],
                                   ),
                                   onTap: () => _navigateToBirdDetailsPage(bird),
@@ -983,7 +984,7 @@ class BirdSearchDelegate extends SearchDelegate<Bird?> {
         birds.where((bird) {
           return bird.identifier.toLowerCase().contains(query.toLowerCase()) ||
               bird.species.toLowerCase().contains(query.toLowerCase()) ||
-              bird.variety.toLowerCase().contains(query.toLowerCase()) ||
+              bird.color.toLowerCase().contains(query.toLowerCase()) ||
               bird.cageNumber.toLowerCase().contains(query.toLowerCase());
         }).toList();
 

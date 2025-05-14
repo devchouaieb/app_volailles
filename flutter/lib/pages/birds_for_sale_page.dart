@@ -79,7 +79,7 @@ class _BirdsForSalePageState extends State<BirdsForSalePage> {
         result['nationalId'],
         result['fullName'],
         buyerPhone: result['phone'],
-        finalPrice: result['price'],
+        soldPrice: result['price'],
       );
 
       // Add the purchased bird to the user's collection
@@ -137,7 +137,7 @@ class _BirdsForSalePageState extends State<BirdsForSalePage> {
                 style: const TextStyle(fontWeight: FontWeight.bold),
               ),
               Text('Espèce: ${bird.species}'),
-              Text('Variété: ${bird.variety}'),
+              Text('Variété: ${bird.color}'),
               Text('Prix demandé: ${bird.askingPrice} DT'),
               const SizedBox(height: 16),
               TextFormField(
@@ -296,7 +296,7 @@ class _BirdsForSalePageState extends State<BirdsForSalePage> {
                         children: [
                           const SizedBox(height: 4),
                           Text('Espèce: ${bird.species}'),
-                          Text('Variété: ${bird.variety}'),
+                          Text('Variété: ${bird.color}'),
                           Text('Genre: ${bird.gender}'),
                           Text('Prix demandé: ${bird.askingPrice} DT'),
                         ],

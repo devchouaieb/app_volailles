@@ -176,7 +176,7 @@ class _CagesPageState extends State<CagesPage> {
 
     final Cage? newCage = await showDialog<Cage>(
       context: context,
-      builder: (_) => AddCageDialog(birds: widget.birds),
+      builder: (_) => AddCageDialog(birds: widget.birds.where((bird) => bird.cage == null).toList()),
     );
 
     if (newCage != null) {

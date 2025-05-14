@@ -40,7 +40,7 @@ class BirdTransferService {
     String buyerNationalId,
     String buyerFullName, {
     String? buyerPhone,
-    double? finalPrice,
+    double? soldPrice,
   }) async {
     try {
       print('🔄 Purchasing bird $birdId...');
@@ -50,7 +50,7 @@ class BirdTransferService {
           'fullName': buyerFullName,
           'phone': buyerPhone ?? '',
         },
-        'finalPrice': finalPrice,
+        'soldPrice': soldPrice,
         'forSale': false, // Remove from sale after purchase
         'status': 'Owned', // Update status to owned
       });

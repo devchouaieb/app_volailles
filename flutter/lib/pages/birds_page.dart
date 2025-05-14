@@ -371,7 +371,7 @@ class _BirdsPageState extends State<BirdsPage> {
                         trailing: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            if (bird.price > 0)
+                            if ((bird.soldPrice ?? 0) > 0)
                               Container(
                                 padding: const EdgeInsets.symmetric(
                                   horizontal: 8,
@@ -382,7 +382,7 @@ class _BirdsPageState extends State<BirdsPage> {
                                   borderRadius: BorderRadius.circular(16),
                                 ),
                                 child: Text(
-                                  "${bird.price} DT",
+                                  "${bird.soldPrice} DT",
                                   style: const TextStyle(
                                     color: Colors.green,
                                     fontWeight: FontWeight.bold,
@@ -390,7 +390,7 @@ class _BirdsPageState extends State<BirdsPage> {
                                 ),
                               ),
                             const SizedBox(width: 8),
-                            if ((!bird.forSale )&& widget.userId == bird.userId)
+                            if ((!bird.forSale )&& widget.userId == bird.userId && bird.isAvailable())
                               IconButton(
                                 icon: const Icon(
                                   Icons.sell,
@@ -399,7 +399,7 @@ class _BirdsPageState extends State<BirdsPage> {
                                 onPressed: () => _showMarkForSaleDialog(bird),
                                 tooltip: 'Marquer à Vendre',
                               ),
-                            if ((!bird.forSale && bird.sellerId == null) && widget.userId == bird.userId)
+                             if ((!bird.forSale && bird.sellerId == null) && widget.userId == bird.userId && bird.isAvailable())
                               IconButton(
                                 icon: const Icon(
                                   Icons.delete,
@@ -407,7 +407,7 @@ class _BirdsPageState extends State<BirdsPage> {
                                 ),
                                 onPressed: () => _deleteBird(bird),
                                 tooltip: 'Supprimer',
-                              )
+                              ) 
                           ],
                         ),
                       ),
