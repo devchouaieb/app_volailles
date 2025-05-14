@@ -99,7 +99,7 @@ class _BirdDetailsPageState extends State<BirdDetailsPage> {
         _buildInfoRow('Espèce:', bird.species),
         _buildInfoRow('Couleur:', bird.color),
        _buildInfoRow('Statut:', bird.getStatus(widget.userId)),
-        _buildInfoRow('Cage:', bird.cageNumber),
+        _buildInfoRow('Cage:', bird.cageNumber.isEmpty ? 'Aucun Cage' : bird.cageNumber),
         _buildInfoColumn("Date de naissance", formatDate(bird.birthDate)),
      /*   _buildInfoRow('Prix:', '${bird.price} €'),
         if (bird.sold) ...[

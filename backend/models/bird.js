@@ -8,6 +8,14 @@ const BirdSchema = new mongoose.Schema({
     unique: true,
     trim: true,
   },
+  category: {
+    type: String,
+    trim: true,
+  },
+  color: {
+    type: String,
+    trim: true
+  },
   species: {
     type: String,
     required: [true, "Species is required"],
@@ -71,8 +79,20 @@ const BirdSchema = new mongoose.Schema({
     }
   },
   cageNumber: {
-    type:String,
-    trim:true
+    type: String,
+    trim: true
+  },
+  lastCageNumber: {
+    type: String,
+    trim: true
+  },
+  lastCageEntryDate: {
+    type: String,
+    trim: true
+  },
+  lastCageExitDate: {
+    type: String,
+    trim: true
   },
   cage: {
     type: mongoose.Schema.Types.ObjectId,

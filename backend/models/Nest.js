@@ -6,6 +6,11 @@ const NestSchema = new mongoose.Schema({
     required: [true, "Le numéro de la cage est obligatoire"],
     trim: true
   },
+  nestNumber: {
+    type: String,
+    required: [true, "Le numéro du couvée est obligatoire"],
+    trim: true
+  },
   numberOfEggs: {
     type: Number,
     required: [true, "Le nombre d'œufs est obligatoire"],
@@ -15,11 +20,14 @@ const NestSchema = new mongoose.Schema({
     type: Number,
     required: [true, "Le nombre d'œufs fécondés est obligatoire"],
     min: [0, "Le nombre d'œufs fécondés ne peut pas être négatif"],
-   
+
   },
   exclusionDate: {
     type: Date,
     required: [true, "La date d'exclusion est obligatoire"]
+  },
+  firstEggDate: {
+    type: Date,
   },
   extractedEggs: {
     type: Number,
@@ -33,6 +41,15 @@ const NestSchema = new mongoose.Schema({
     type: Number,
     default: 0,
     min: [0, "Le nombre d'oiseaux sortis ne peut pas être négatif"]
+  },
+  femaleExits: {
+    type: Number,
+    default: 0,
+
+  },
+  maleExits: {
+    type: Number,
+    default: 0,
   },
   status: {
     type: String,
@@ -48,10 +65,10 @@ const NestSchema = new mongoose.Schema({
     ref: 'User',
     required: true
   },
-  cage : {
-    type: mongoose.Schema.Types.ObjectId ,
-    ref:'Cage',
-    required : true
+  cage: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Cage',
+    required: true
   }
 }, {
   timestamps: true

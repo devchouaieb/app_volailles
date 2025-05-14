@@ -34,9 +34,9 @@ const getNests = asyncHandler(async (req, res) => {
 const getNest = asyncHandler(async (req, res) => {
   try {
     const nest = await Nest.findById(req.params.id).populate({
-        path: 'cage',
-        populate: [{ path: "male" }, { path: "female", }]
-      });
+      path: 'cage',
+      populate: [{ path: "male" }, { path: "female", }]
+    });
 
     if (!nest) {
       return res.status(404).json({
@@ -78,6 +78,10 @@ const createNest = asyncHandler(async (req, res) => {
       exclusionDate,
       extractedEggs,
       firstBirdExitDate,
+      nestNumber,
+      firstEggDate,
+      maleExits,
+      femaleExits,
       birdsExited,
       status,
       notes
@@ -91,6 +95,20 @@ const createNest = asyncHandler(async (req, res) => {
         message: 'Cage non trouvée'
       });
     }
+    const existingNest = await Nest.findOne({
+      $and: [
+        { cageNumber: cageNumber },
+        { nestNumber: nestNumber },
+        { user: req.user.id }
+      ]
+    })
+
+    if (existingNest) {
+      return res.status(400).json({
+        success: false,
+        message: 'Numéro du couvé deja existe'
+      });
+    }
 
     // Create the nest
     const nest = await Nest.create({
@@ -100,6 +118,10 @@ const createNest = asyncHandler(async (req, res) => {
       exclusionDate,
       extractedEggs,
       firstBirdExitDate,
+      nestNumber,
+      firstEggDate,
+      maleExits,
+      femaleExits,
       birdsExited,
       status,
       notes,
@@ -107,9 +129,9 @@ const createNest = asyncHandler(async (req, res) => {
       cage: cage._id
     });
     const createNest = await Nest.findById(nest._id).populate({
-        path: 'cage',
-        populate: [{ path: "male" }, { path: "female", }]
-      });
+      path: 'cage',
+      populate: [{ path: "male" }, { path: "female", }]
+    });
     res.status(201).json({
       success: true,
       data: createNest
@@ -160,9 +182,9 @@ const updateNest = asyncHandler(async (req, res) => {
       new: true,
       runValidators: true
     }).populate({
-        path: 'cage',
-        populate: [{ path: "male" }, { path: "female", }]
-      });
+      path: 'cage',
+      populate: [{ path: "male" }, { path: "female", }]
+    });
 
     res.status(200).json({
       success: true,

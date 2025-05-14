@@ -1,4 +1,6 @@
 // lib/routes/app_routes.dart
+import 'package:app_volailles/pages/balance_page.dart';
+import 'package:app_volailles/pages/product_page.dart';
 import 'package:flutter/material.dart';
 import 'package:app_volailles/pages/auth/login_page.dart';
 import 'package:app_volailles/pages/auth/register_page.dart';
@@ -35,6 +37,8 @@ class AppRoutes {
   static const String sensorDashboard = '/sensor-dashboard';
   static const String birds = '/birds';
   static const String birdsForSale = '/birds-for-sale';
+  static const String products = '/products';
+  static const String balance = '/balance';
   static const String associations = '/associations';
   static const String reseau = '/reseau';
   static const String selectAssociation = '/select-association';
@@ -63,6 +67,8 @@ class AppRoutes {
       sensorDashboard: (context) => const SensorDashboardPage(),
       birds: (context) => const BirdsPage(null),
       birdsForSale: (context) =>  BirdsForSalePage(null),
+      products: (context) =>  ProductPage(),
+      balance: (context) => const BalancePage(),
       associations: (context) => const AssociationsPage(),
       reseau: (context) => const ReseauPage(),
       selectAssociation: (context) => const SelectAssociationPage(),

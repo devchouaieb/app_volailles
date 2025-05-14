@@ -16,12 +16,16 @@ import 'package:app_volailles/pages/sensor_dashboard_page.dart';
 import 'package:app_volailles/pages/species_page.dart';
 import 'package:app_volailles/pages/statistics_page.dart';
 import 'package:app_volailles/pages/vendues_page.dart';
+import 'package:app_volailles/pages/product_page.dart';
+import 'package:app_volailles/pages/balance_page.dart';
 import 'package:app_volailles/services/auth_service.dart';
 import 'package:app_volailles/services/bird_service.dart';
 import 'package:app_volailles/services/bird_sync_service.dart';
 import 'package:app_volailles/services/bird_transfer_service.dart';
+import 'package:app_volailles/utils/api_exception.dart';
 import 'package:app_volailles/utils/constants.dart';
 import 'package:app_volailles/utils/date_utils.dart';
+import 'package:app_volailles/utils/dialog_error_helpers.dart';
 import 'package:app_volailles/widgets/app_drawer.dart';
 import 'package:flutter/material.dart';
 
@@ -65,7 +69,7 @@ class _HomePageState extends State<HomePage> {
           Navigator.pushAndRemoveUntil(
             context,
             MaterialPageRoute(builder: (_) => const LoginPage()),
-            (route) => false,
+                (route) => false,
           );
         }
         return;
@@ -122,7 +126,7 @@ class _HomePageState extends State<HomePage> {
         setState(() {
           _isLoading = false;
           _errorMessage =
-              'Erreur de connexion au serveur. Vérifiez votre connexion internet.';
+          'Erreur de connexion au serveur. Vérifiez votre connexion internet.';
         });
 
         final currentContext = context;
@@ -178,24 +182,21 @@ class _HomePageState extends State<HomePage> {
 
       // Show success message
       if (mounted) {
-        final currentContext = context;
-        ScaffoldMessenger.of(currentContext).showSnackBar(
-          const SnackBar(
-            content: Text('Oiseau sauvegardé avec succès'),
-            backgroundColor: Colors.green,
-          ),
+        DialogErrorHelpers.showSuccessSnackBar(
+          context, 
+          message: bird.id == null 
+            ? 'Nouvel oiseau ajouté avec succès' 
+            : 'Oiseau mis à jour avec succès',
         );
       }
     } catch (e) {
       if (mounted) {
         setState(() => _isLoading = false);
-        final currentContext = context;
-        ScaffoldMessenger.of(currentContext).showSnackBar(
-          SnackBar(
-            content: Text('Erreur lors de la sauvegarde: $e'),
-            backgroundColor: Colors.red,
-          ),
-        );
+        // Show error message
+        final errorMessage = e is ApiException ? e.message : 'Une erreur inattendue est survenue. Veuillez réessayer plus tard.';
+        DialogErrorHelpers.showErrorDialog(
+            context, title: "Échec de la sauvegarde",
+            message: errorMessage);
       }
     }
   }
@@ -256,13 +257,12 @@ class _HomePageState extends State<HomePage> {
   }
 
   // Vendre un oiseau
-  Future<void> _sellBird(
-    Bird bird,
-    double price,
-    String buyerNationalId,
-    String buyerFullName, {
-    String? buyerPhone,
-  }) async {
+  Future<void> _sellBird(Bird bird,
+      double price,
+      String buyerNationalId,
+      String buyerFullName, {
+        String? buyerPhone,
+      }) async {
     if (!mounted) return;
 
     // Vérifier que l'ID de l'oiseau n'est pas null
@@ -360,7 +360,8 @@ class _HomePageState extends State<HomePage> {
     showDialog<void>(
       context: context,
       builder:
-          (dialogContext) => SellBirdDialog(
+          (dialogContext) =>
+          SellBirdDialog(
             bird: bird,
             onSuccess: (double price, String buyerNationalId) {
               _sellBird(
@@ -380,7 +381,8 @@ class _HomePageState extends State<HomePage> {
     showDialog<void>(
       context: context,
       builder:
-          (dialogContext) => MarkForSaleDialog(
+          (dialogContext) =>
+          MarkForSaleDialog(
             bird: bird,
             dialogContext: dialogContext,
             onSuccess: (double askingPrice) {
@@ -461,13 +463,15 @@ class _HomePageState extends State<HomePage> {
     showDialog(
       context: currentContext,
       builder:
-          (dialogContext) => AlertDialog(
+          (dialogContext) =>
+          AlertDialog(
             title: const Text(
               "Supprimer l'oiseau",
               style: TextStyle(color: Colors.red),
             ),
             content: Text(
-              "Êtes-vous sûr de vouloir supprimer l'oiseau ${bird.identifier} ?",
+              "Êtes-vous sûr de vouloir supprimer l'oiseau ${bird
+                  .identifier} ?",
             ),
             actions: [
               TextButton(
@@ -492,7 +496,8 @@ class _HomePageState extends State<HomePage> {
   void _navigateToBirdDetailsPage(Bird bird) async {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => BirdDetailsPage(bird: bird ,userId: _currentUser?["id"],)),
+      MaterialPageRoute(builder: (context) =>
+          BirdDetailsPage(bird: bird, userId: _currentUser?["id"],)),
     );
   }
 
@@ -532,16 +537,17 @@ class _HomePageState extends State<HomePage> {
           context,
           MaterialPageRoute(
             builder:
-                (_) => CagesPage(
+                (_) =>
+                CagesPage(
                   birds:
-                      _birds
-                          .where(
-                            (bird) =>
-                                !bird.sold &&
-                                !bird.forSale &&
-                                bird.userId == _currentUser?["id"],
-                          )
-                          .toList(),
+                  _birds
+                      .where(
+                        (bird) =>
+                    !bird.sold &&
+                        !bird.forSale &&
+                        bird.userId == _currentUser?["id"],
+                  )
+                      .toList(),
                 ),
           ),
         );
@@ -552,6 +558,14 @@ class _HomePageState extends State<HomePage> {
         Navigator.push(
           context,
           MaterialPageRoute(builder: (_) => const NestPage()),
+        );
+        break;
+
+      case 'Balance':
+        Navigator.pop(context);
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const BalancePage()),
         );
         break;
       case 'Vendues':
@@ -589,6 +603,13 @@ class _HomePageState extends State<HomePage> {
           MaterialPageRoute(builder: (_) => SpeciesPage()),
         );
         break;
+      case 'Budget':
+        Navigator.pop(context);
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => ProductPage()),
+        );
+        break;
       case 'Associations':
         Navigator.pop(context);
         Navigator.push(
@@ -615,7 +636,7 @@ class _HomePageState extends State<HomePage> {
         Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(builder: (_) => const LoginPage()),
-          (route) => false,
+              (route) => false,
         );
         break;
       default:
@@ -692,221 +713,224 @@ class _HomePageState extends State<HomePage> {
         onDrawerItemClicked: _handleDrawerItemClick,
       ),
       body:
-          _isLoading
-              ? const Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    CircularProgressIndicator(),
-                    SizedBox(height: 16),
-                    Text(
-                      'Chargement des données...',
-                      style: TextStyle(fontSize: 16, color: Colors.deepPurple),
-                    ),
-                  ],
+      _isLoading
+          ? const Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            CircularProgressIndicator(),
+            SizedBox(height: 16),
+            Text(
+              'Chargement des données...',
+              style: TextStyle(fontSize: 16, color: Colors.deepPurple),
+            ),
+          ],
+        ),
+      )
+          : _errorMessage.isNotEmpty
+          ? Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(
+              Icons.error_outline,
+              color: Colors.red,
+              size: 48,
+            ),
+            const SizedBox(height: 16),
+            Text(
+              'Erreur: $_errorMessage',
+              style: const TextStyle(fontSize: 16, color: Colors.red),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: _loadData,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.deepPurple,
+              ),
+              child: const Text('Réessayer'),
+            ),
+          ],
+        ),
+      )
+          : RefreshIndicator(
+        onRefresh: _loadData,
+        child: SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                const Text(
+                  "Liste des volailles",
+                  style: TextStyle(
+                    fontSize: 28,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.deepPurple,
+                  ),
+                  textAlign: TextAlign.center,
                 ),
-              )
-              : _errorMessage.isNotEmpty
-              ? Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Icon(
-                      Icons.error_outline,
-                      color: Colors.red,
-                      size: 48,
-                    ),
-                    const SizedBox(height: 16),
-                    Text(
-                      'Erreur: $_errorMessage',
-                      style: const TextStyle(fontSize: 16, color: Colors.red),
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(height: 16),
-                    ElevatedButton(
-                      onPressed: _loadData,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.deepPurple,
+                const SizedBox(height: 20),
+                if (_currentUser != null)
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: Colors.deepPurple.shade50,
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                        color: Colors.deepPurple.shade200,
+                        width: 1,
                       ),
-                      child: const Text('Réessayer'),
                     ),
-                  ],
-                ),
-              )
-              : RefreshIndicator(
-                onRefresh: _loadData,
-                child: SingleChildScrollView(
-                  physics: const AlwaysScrollableScrollPhysics(),
-                  child: Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                    child: Row(
                       children: [
-                        const Text(
-                          "Liste des volailles",
-                          style: TextStyle(
-                            fontSize: 28,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.deepPurple,
-                          ),
-                          textAlign: TextAlign.center,
+                        const Icon(
+                          Icons.person,
+                          color: Colors.deepPurple,
                         ),
-                        const SizedBox(height: 20),
-                        if (_currentUser != null)
-                          Container(
-                            padding: const EdgeInsets.all(12),
-                            decoration: BoxDecoration(
-                              color: Colors.deepPurple.shade50,
-                              borderRadius: BorderRadius.circular(12),
-                              border: Border.all(
-                                color: Colors.deepPurple.shade200,
-                                width: 1,
-                              ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: Text(
+                            "Connecté en tant que: ${_currentUser!['fullName']}",
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.deepPurple,
                             ),
-                            child: Row(
-                              children: [
-                                const Icon(
-                                  Icons.person,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                const SizedBox(height: 30),
+                if (_birds.isEmpty)
+                  Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Icon(
+                          Icons.pets,
+                          size: 64,
+                          color: Colors.grey,
+                        ),
+                        const SizedBox(height: 16),
+                        const Text(
+                          "Aucun oiseau ajouté",
+                          style: TextStyle(
+                            fontSize: 18,
+                            color: Colors.grey,
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        ElevatedButton(
+                          onPressed: () => _navigateToAddBirdPage(),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.deepPurple,
+                          ),
+                          child: const Text('Ajouter un oiseau'),
+                        ),
+                      ],
+                    ),
+                  )
+                else
+                  ListView.builder(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: _birds.length,
+                    itemBuilder: (context, index) {
+                      final bird = _birds[index];
+                      return Container(
+                        margin: const EdgeInsets.symmetric(vertical: 8),
+                        decoration: BoxDecoration(
+                          color: _getBirdColor(bird),
+                          borderRadius: BorderRadius.circular(12),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.shade300,
+                              spreadRadius: 1,
+                              blurRadius: 3,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
+                        ),
+                        child: ListTile(
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 8,
+                          ),
+                          leading: CircleAvatar(
+                            backgroundColor:
+                            bird.gender.toLowerCase() == 'male'
+                                ? Colors.blue.shade200
+                                : bird.gender.toLowerCase() ==
+                                'female'
+                                ? Colors.pink.shade200
+                                : Colors.grey.shade200,
+                            child: const Icon(
+                              Icons.pets,
+                              color: Colors.white,
+                            ),
+                          ),
+                          title: Text(
+                            bird.identifier,
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          subtitle: Text(
+                            "${bird.species} | ${bird.getStatus(
+                                _currentUser?["id"])} | Age: ${calculateAge(
+                                bird.birthDate)}",
+                            style: const TextStyle(fontSize: 12),
+                          ),
+                          trailing: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              if ((bird.soldPrice ?? 0) > 0)
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 8,
+                                    vertical: 4,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: Colors.green.shade100,
+                                    borderRadius: BorderRadius.circular(
+                                      16,
+                                    ),
+                                  ),
+                                  child: Text(
+                                    "${bird.soldPrice} DT",
+                                    style: const TextStyle(
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              const SizedBox(width: 8),
+                              bird.isAvailable() ? IconButton(
+                                icon: const Icon(
+                                  Icons.sell,
                                   color: Colors.deepPurple,
                                 ),
-                                const SizedBox(width: 10),
-                                Expanded(
-                                  child: Text(
-                                    "Connecté en tant que: ${_currentUser!['fullName']}",
-                                    style: const TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.deepPurple,
+                                onPressed:
+                                    () => _showMarkForSaleDialog(bird),
+                                tooltip: 'Vendre',
+                              ) : const SizedBox(),
+                              bird.isAvailable() ? IconButton(
+                                onPressed:
+                                    () =>
+                                    _navigateToAddBirdPage(
+                                      bird: bird,
                                     ),
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        const SizedBox(height: 30),
-                        if (_birds.isEmpty)
-                          Center(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                const Icon(
-                                  Icons.pets,
-                                  size: 64,
+                                icon: const Icon(
+                                  Icons.edit,
                                   color: Colors.grey,
                                 ),
-                                const SizedBox(height: 16),
-                                const Text(
-                                  "Aucun oiseau ajouté",
-                                  style: TextStyle(
-                                    fontSize: 18,
-                                    color: Colors.grey,
-                                  ),
-                                ),
-                                const SizedBox(height: 16),
-                                ElevatedButton(
-                                  onPressed: () => _navigateToAddBirdPage(),
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.deepPurple,
-                                  ),
-                                  child: const Text('Ajouter un oiseau'),
-                                ),
-                              ],
-                            ),
-                          )
-                        else
-                          ListView.builder(
-                            shrinkWrap: true,
-                            physics: const NeverScrollableScrollPhysics(),
-                            itemCount: _birds.length,
-                            itemBuilder: (context, index) {
-                              final bird = _birds[index];
-                              return Container(
-                                margin: const EdgeInsets.symmetric(vertical: 8),
-                                decoration: BoxDecoration(
-                                  color: _getBirdColor(bird),
-                                  borderRadius: BorderRadius.circular(12),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.grey.shade300,
-                                      spreadRadius: 1,
-                                      blurRadius: 3,
-                                      offset: const Offset(0, 2),
-                                    ),
-                                  ],
-                                ),
-                                child: ListTile(
-                                  contentPadding: const EdgeInsets.symmetric(
-                                    horizontal: 16,
-                                    vertical: 8,
-                                  ),
-                                  leading: CircleAvatar(
-                                    backgroundColor:
-                                        bird.gender.toLowerCase() == 'male'
-                                            ? Colors.blue.shade200
-                                            : bird.gender.toLowerCase() ==
-                                                'female'
-                                            ? Colors.pink.shade200
-                                            : Colors.grey.shade200,
-                                    child: const Icon(
-                                      Icons.pets,
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                  title: Text(
-                                    bird.identifier,
-                                    style: const TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  subtitle: Text(
-                                    "${bird.species} | ${bird.getStatus(_currentUser?["id"])} | Age: ${calculateAge(bird.birthDate)}",
-                                    style: const TextStyle(fontSize: 12),
-                                  ),
-                                  trailing: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      if ((bird.soldPrice ?? 0) > 0)
-                                        Container(
-                                          padding: const EdgeInsets.symmetric(
-                                            horizontal: 8,
-                                            vertical: 4,
-                                          ),
-                                          decoration: BoxDecoration(
-                                            color: Colors.green.shade100,
-                                            borderRadius: BorderRadius.circular(
-                                              16,
-                                            ),
-                                          ),
-                                          child: Text(
-                                            "${bird.soldPrice} DT",
-                                            style: const TextStyle(
-                                              color: Colors.red,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                        ),
-                                      const SizedBox(width: 8),
-                                 bird.isAvailable() ?     IconButton(
-                                        icon: const Icon(
-                                          Icons.sell,
-                                          color: Colors.deepPurple,
-                                        ),
-                                        onPressed:
-                                            () => _showMarkForSaleDialog(bird),
-                                        tooltip: 'Vendre',
-                                      ) : const SizedBox(),
-                                 bird.isAvailable() ?     IconButton(
-                                        onPressed:
-                                            () => _navigateToAddBirdPage(
-                                              bird: bird,
-                                            ),
-                                        icon: const Icon(
-                                          Icons.edit,
-                                          color: Colors.grey,
-                                        ),
-                                      ) : const SizedBox(),
-                                  /*     bird.isAvailable() ? IconButton(
+                              ) : const SizedBox(),
+                              /*     bird.isAvailable() ? IconButton(
                                         icon: const Icon(
                                           Icons.delete,
                                           color: Colors.red,
@@ -917,18 +941,18 @@ class _HomePageState extends State<HomePage> {
                                             ),
                                         tooltip: 'Supprimer',
                                       ) : const SizedBox(), */
-                                    ],
-                                  ),
-                                  onTap: () => _navigateToBirdDetailsPage(bird),
-                                ),
-                              );
-                            },
+                            ],
                           ),
-                      ],
-                    ),
+                          onTap: () => _navigateToBirdDetailsPage(bird),
+                        ),
+                      );
+                    },
                   ),
-                ),
-              ),
+              ],
+            ),
+          ),
+        ),
+      ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => _navigateToAddBirdPage(),
         child: const Icon(Icons.add),
@@ -981,12 +1005,12 @@ class BirdSearchDelegate extends SearchDelegate<Bird?> {
   Widget _buildSearchResults() {
     // Filtrer les oiseaux en fonction de la requête
     final filteredBirds =
-        birds.where((bird) {
-          return bird.identifier.toLowerCase().contains(query.toLowerCase()) ||
-              bird.species.toLowerCase().contains(query.toLowerCase()) ||
-              bird.color.toLowerCase().contains(query.toLowerCase()) ||
-              bird.cageNumber.toLowerCase().contains(query.toLowerCase());
-        }).toList();
+    birds.where((bird) {
+      return bird.identifier.toLowerCase().contains(query.toLowerCase()) ||
+          bird.species.toLowerCase().contains(query.toLowerCase()) ||
+          bird.color.toLowerCase().contains(query.toLowerCase()) ||
+          bird.cageNumber.toLowerCase().contains(query.toLowerCase());
+    }).toList();
 
     // Trier les résultats
     filteredBirds.sort((a, b) => a.identifier.compareTo(b.identifier));
@@ -998,16 +1022,16 @@ class BirdSearchDelegate extends SearchDelegate<Bird?> {
         return ListTile(
           title: Text(bird.identifier),
           subtitle: Text(
-            '${bird.species} | ${bird.gender} | Cage: ${bird.cageNumber}',
+            '${bird.species} | ${bird.gender} | Cage: ${bird.cageNumber.isEmpty ? "Aucun cage" : bird.cageNumber}',
           ),
           leading: Icon(
             Icons.pets,
             color:
-                bird.gender.toLowerCase() == 'male'
-                    ? Colors.blue
-                    : bird.gender.toLowerCase() == 'female'
-                    ? Colors.pink
-                    : Colors.grey,
+            bird.gender.toLowerCase() == 'male'
+                ? Colors.blue
+                : bird.gender.toLowerCase() == 'female'
+                ? Colors.pink
+                : Colors.grey,
           ),
           onTap: () {
             close(context, bird);

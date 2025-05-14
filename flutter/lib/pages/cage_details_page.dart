@@ -1,10 +1,9 @@
-import 'package:app_volailles/utils/date_utils.dart';
-import 'package:provider/provider.dart';
-import 'package:flutter/material.dart';
-import 'package:app_volailles/models/cage.dart';
 import 'package:app_volailles/models/bird.dart';
-import 'package:app_volailles/services/cage_service.dart';
+import 'package:app_volailles/models/cage.dart';
 import 'package:app_volailles/services/bird_service.dart';
+import 'package:app_volailles/services/cage_service.dart';
+import 'package:app_volailles/utils/date_utils.dart';
+import 'package:flutter/material.dart';
 
 class CageDetailsPage extends StatefulWidget {
   final Cage cage;
@@ -33,9 +32,10 @@ class _CageDetailsPageState extends State<CageDetailsPage> {
     super.initState();
     _loadAvailableBirds();
   }
-_navigateBack(){
+
+  _navigateBack() {
     Navigator.of(context).pop();
-}
+  }
 
   Future<void> _loadAvailableBirds() async {
     setState(() => _isLoading = true);
@@ -104,17 +104,32 @@ _navigateBack(){
 
     if (selectedBird != null) {
       try {
-        await _birdService.updateBirdCage(selectedBird.id!, widget.cage.id,widget.cage.cageNumber);
-        if(gender == 'male'){
-          await _cageService.updateCageBirds(widget.cage.id!, male: selectedBird , female: widget.cage.female );
-        }else{
-          await _cageService.updateCageBirds(widget.cage.id!,male: widget.cage.male, female: selectedBird);
+        await _birdService.updateBirdCage(
+          selectedBird.id!,
+          widget.cage.id,
+          widget.cage.cageNumber,
+          lastCageNumber: selectedBird.lastCageNumber,
+          lastCageEntryDate: DateTime.now().toIso8601String(),
+          lastCageExitDate: selectedBird.lastCageExitDate,
+        );
+        if (gender == 'male') {
+          await _cageService.updateCageBirds(
+            widget.cage.id!,
+            male: selectedBird,
+            female: widget.cage.female,
+          );
+        } else {
+          await _cageService.updateCageBirds(
+            widget.cage.id!,
+            male: widget.cage.male,
+            female: selectedBird,
+          );
         }
         _navigateBack();
-    //    widget.onCageUpdated();
+        //    widget.onCageUpdated();
 
         // Refresh the page
-       // _loadAvailableBirds();
+        // _loadAvailableBirds();
 
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -367,19 +382,36 @@ _navigateBack(){
     if (confirmed == true) {
       try {
         // Supprimer l'oiseau
-        await birdService.updateBirdCage(bird.id!, null,"");
+        await birdService.updateBirdCage(
+          bird.id!,
+          null,
+          "",
+          lastCageNumber: widget.cage.cageNumber,
+          lastCageEntryDate: bird.lastCageEntryDate,
+          lastCageExitDate: DateTime.now().toIso8601String(),
+        );
 
         // Mettre à jour la cage
         if (bird.gender == 'male') {
-          await cageService.updateCageBirds(widget.cage.id!, male: null , female: widget.cage.female);
+          await cageService.updateCageBirds(
+            widget.cage.id!,
+            male: null,
+            female: widget.cage.female,
+          );
         } else {
-          await cageService.updateCageBirds(widget.cage.id!, female: null , male: widget.cage.male);
+          await cageService.updateCageBirds(
+            widget.cage.id!,
+            female: null,
+            male: widget.cage.male,
+          );
         }
 
         // Rafraîchir la page
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Oiseau supprimé du cage avec succès')),
+            const SnackBar(
+              content: Text('Oiseau supprimé du cage avec succès'),
+            ),
           );
           Navigator.of(context).pop(); // Retour à la page des cages
         }
@@ -438,20 +470,44 @@ _navigateBack(){
     if (selectedCage != null) {
       try {
         // Mettre à jour la cage de l'oiseau
-        await birdService.updateBirdCage(bird.id!, selectedCage.id,selectedCage.cageNumber);
+        await birdService.updateBirdCage(
+          bird.id!,
+          selectedCage.id,
+          selectedCage.cageNumber,
+          lastCageNumber: widget.cage.cageNumber,
+          lastCageEntryDate: DateTime.now().toIso8601String(),
+
+          lastCageExitDate: DateTime.now().toIso8601String(),
+        );
 
         // Mettre à jour l'ancienne cage
         if (bird.gender == 'male') {
-          await cageService.updateCageBirds(widget.cage.id!, male: null,female: widget.cage.female);
+          await cageService.updateCageBirds(
+            widget.cage.id!,
+            male: null,
+            female: widget.cage.female,
+          );
         } else {
-          await cageService.updateCageBirds(widget.cage.id!,male: widget.cage.male, female: null);
+          await cageService.updateCageBirds(
+            widget.cage.id!,
+            male: widget.cage.male,
+            female: null,
+          );
         }
 
         // Mettre à jour la nouvelle cage
         if (bird.gender == 'male') {
-          await cageService.updateCageBirds(selectedCage.id!, male: bird,female: selectedCage.female);
+          await cageService.updateCageBirds(
+            selectedCage.id!,
+            male: bird,
+            female: selectedCage.female,
+          );
         } else {
-          await cageService.updateCageBirds(selectedCage.id!, female: bird,male: selectedCage.male);
+          await cageService.updateCageBirds(
+            selectedCage.id!,
+            female: bird,
+            male: selectedCage.male,
+          );
         }
 
         // Rafraîchir la page
@@ -479,7 +535,22 @@ _navigateBack(){
         _buildInfoRow('Categorie', bird.category),
         _buildInfoRow('Espèce', bird.species),
         _buildInfoRow('Couleur', bird.color),
-        _buildInfoRow('Cage', bird.cageNumber),
+        bird.lastCageNumber != null
+            ? _buildInfoRow('Ancien Cage', bird.lastCageNumber ?? "")
+            : const SizedBox.shrink(),
+        bird.lastCageExitDate != null
+            ? _buildInfoRow(
+              'Date de  sortie',
+              formatDateTime(bird.lastCageExitDate!),
+            )
+            : const SizedBox.shrink(),
+        _buildInfoRow('Cage', bird.cageNumber.isEmpty ? 'Aucun Cage' : bird.cageNumber),
+        bird.lastCageEntryDate != null
+            ? _buildInfoRow(
+              'Date d\'entrée ',
+              formatDateTime(bird.lastCageEntryDate!),
+            )
+            : const SizedBox.shrink(),
         _buildInfoRow('Date de naissance:', formatDateTime(bird.birthDate)),
         if (bird.price > 0) _buildInfoRow('Prix', '${bird.price} DT'),
         _buildStatusRow('État ', bird.isAvailable()),
@@ -525,10 +596,15 @@ _navigateBack(){
               ),
             ),
           ),
-          Expanded(child: Text( available ? 'Disponible' : 'Non disponible' , style:  TextStyle(
-            fontWeight: FontWeight.bold,
-            color: available ? Colors.green : Colors.red,
-          ),)),
+          Expanded(
+            child: Text(
+              available ? 'Disponible' : 'Non disponible',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: available ? Colors.green : Colors.red,
+              ),
+            ),
+          ),
         ],
       ),
     );

@@ -1,12 +1,14 @@
 import 'package:app_volailles/models/bird.dart';
-import 'package:app_volailles/services/bird_service.dart';
-import 'package:flutter/material.dart';
-import 'package:app_volailles/models/nest.dart';
 import 'package:app_volailles/models/cage.dart';
-import 'package:app_volailles/services/nest_service.dart';
-import 'package:app_volailles/services/cage_service.dart';
+import 'package:app_volailles/models/nest.dart';
 import 'package:app_volailles/pages/add_bird.dart';
 import 'package:app_volailles/pages/add_nest_dialog.dart';
+import 'package:app_volailles/services/bird_service.dart';
+import 'package:app_volailles/services/cage_service.dart';
+import 'package:app_volailles/services/nest_service.dart';
+import 'package:app_volailles/utils/api_exception.dart';
+import 'package:app_volailles/utils/dialog_error_helpers.dart';
+import 'package:flutter/material.dart';
 
 class NestPage extends StatefulWidget {
   const NestPage({super.key});
@@ -18,7 +20,7 @@ class NestPage extends StatefulWidget {
 class _NestPageState extends State<NestPage> {
   final _nestService = NestService();
   final _cageService = CageService();
-   final _birdService = BirdService();
+  final _birdService = BirdService();
   List<Nest> _nests = [];
   List<Cage> _cages = [];
   bool _isLoading = true;
@@ -88,29 +90,31 @@ class _NestPageState extends State<NestPage> {
     } catch (e) {
       if (!mounted) return;
       setState(() {
-        _errorMessage = e.toString();
         _isLoading = false;
       });
 
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Erreur lors de l\'ajout: ${e.toString()}'),
-            backgroundColor: Colors.red,
-          ),
+        String errorMessage =
+            (e is ApiException)
+                ? e.message
+                : 'Une erreur inattendue est survenue. Veuillez réessayer plus tard.';
+
+        DialogErrorHelpers.showErrorDialog(
+          context,
+          title: "Echec de la sauvegarde",
+          message: errorMessage,
         );
       }
     }
   }
-  Future<void> _addBird(Bird bird)async{
-  if (!mounted) return;
+
+  Future<void> _addBird(Bird bird) async {
+    if (!mounted) return;
 
     setState(() => _isLoading = true);
 
     try {
-    
-       await _birdService.createBird(bird);
-      
+      await _birdService.createBird(bird);
 
       if (!mounted) return;
 
@@ -136,7 +140,6 @@ class _NestPageState extends State<NestPage> {
         ),
       );
     }
-  
   }
 
   Future<void> _updateNest(Nest nest) async {
@@ -227,11 +230,9 @@ class _NestPageState extends State<NestPage> {
       });
 
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Couvé supprimé avec succès'),
-            backgroundColor: Colors.green,
-          ),
+        DialogErrorHelpers.showSuccessSnackBar(
+          context,
+          message: 'Couvé supprimé avec succès',
         );
       }
     } catch (e) {
@@ -242,11 +243,9 @@ class _NestPageState extends State<NestPage> {
       });
 
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Erreur lors de la suppression: ${e.toString()}'),
-            backgroundColor: Colors.red,
-          ),
+        DialogErrorHelpers.showErrorSnackBar(
+          context,
+          message: 'Erreur lors de la suppression: ${e.toString()}',
         );
       }
     }
@@ -268,15 +267,44 @@ class _NestPageState extends State<NestPage> {
   void _openAddBirdDialog(Nest nest) async {
     if (!mounted) return;
 
+    // Check if total bird exits exceed number of eggs
+    if (nest.birdsExited >= nest.numberOfEggs) {
+      await showDialog(
+        context: context,
+        builder:
+            (context) => AlertDialog(
+              title: const Text('Limite de Sortie Atteinte'),
+              content: Text(
+                'Vous avez déjà atteint le nombre maximal de sorties pour ce nid (${nest.numberOfEggs} Œufs).',
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  child: const Text('OK'),
+                ),
+              ],
+            ),
+      );
+      return;
+    }
+
     final result = await Navigator.push(
       context,
       MaterialPageRoute(
         builder:
             (_) => AddBirdPage(
               onSave: (bird) async {
-                // Update nest with new bird
+                // Determine bird's gender for exit tracking
                 final updatedNest = nest.copyWith(
                   birdsExited: nest.birdsExited + 1,
+                  maleExits:
+                      bird.gender == 'male'
+                          ? (nest.maleExits + 1)
+                          : nest.maleExits,
+                  femaleExits:
+                      bird.gender == 'female'
+                          ? (nest.femaleExits + 1)
+                          : nest.femaleExits,
                   firstBirdExitDate: nest.firstBirdExitDate ?? DateTime.now(),
                 );
                 await _updateNest(updatedNest);
@@ -382,14 +410,30 @@ class _NestPageState extends State<NestPage> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
+                              "Numéro de Couvé: ${nest.nestNumber ?? ""}",
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            Text(
                               "Œufs: ${nest.numberOfEggs} | Fécondés: ${nest.fertilizedEggs}",
                             ),
                             Text(
                               "Extraits: ${nest.extractedEggs} | Sortis: ${nest.birdsExited}",
                             ),
+                            Text(
+                              "Date d'exclusion: ${nest.exclusionDate.day}/${nest.exclusionDate.month}/${nest.exclusionDate.year}",
+                            ),
+                            Text(
+                              "Sorties Mâles: ${nest.maleExits} | Sorties Femelles: ${nest.femaleExits}",
+                            ),
                             if (nest.firstBirdExitDate != null)
                               Text(
                                 "Première sortie: ${nest.firstBirdExitDate!.day}/${nest.firstBirdExitDate!.month}/${nest.firstBirdExitDate!.year}",
+                              ),
+                            if (nest.firstEggDate != null)
+                              Text(
+                                "Date du 1er Œuf: ${nest.firstEggDate!.day}/${nest.firstEggDate!.month}/${nest.firstEggDate!.year}",
                               ),
                           ],
                         ),

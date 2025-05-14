@@ -11,7 +11,11 @@ class Nest {
   final int birdsExited;
   final String? status;
   final String? notes;
-  final Cage? cage ;
+  final Cage? cage;
+  final String? nestNumber;
+  final DateTime? firstEggDate;
+  final int maleExits;
+  final int femaleExits;
 
   Nest({
     this.id,
@@ -24,7 +28,11 @@ class Nest {
     this.birdsExited = 0,
     this.status = 'active',
     this.notes,
-    this.cage
+    this.cage,
+    this.nestNumber,
+    this.firstEggDate,
+    this.maleExits = 0,
+    this.femaleExits = 0
   });
 
   factory Nest.fromJson(Map<String, dynamic> json) {
@@ -42,7 +50,11 @@ class Nest {
       birdsExited: json['birdsExited'] ?? 0,
       status: json['status'] ?? 'active',
       notes: json['notes'],
-      cage: json['cage'] != null ? Cage.fromJson( json['cage']) : null
+      cage: json['cage'] != null ? Cage.fromJson(json['cage']) : null,
+      nestNumber: json['nestNumber'],
+      firstEggDate: json['firstEggDate'] != null ? DateTime.parse(json['firstEggDate']) : null,
+      maleExits: json['maleExits'] ?? 0,
+      femaleExits: json['femaleExits'] ?? 0
     );
   }
 
@@ -57,6 +69,11 @@ class Nest {
       'birdsExited': birdsExited,
       'status': status,
       'notes': notes,
+      'cage': cage?.id,
+      'nestNumber': nestNumber,
+      'firstEggDate': firstEggDate?.toIso8601String(),
+      'maleExits': maleExits,
+      'femaleExits': femaleExits
     };
   }
 
@@ -71,6 +88,10 @@ class Nest {
     int? birdsExited,
     String? status,
     String? notes,
+    String? nestNumber,
+    DateTime? firstEggDate,
+    int? maleExits,
+    int? femaleExits,
   }) {
     return Nest(
       id: id ?? this.id,
@@ -83,6 +104,11 @@ class Nest {
       birdsExited: birdsExited ?? this.birdsExited,
       status: status ?? this.status,
       notes: notes ?? this.notes,
+      cage: cage,
+      nestNumber: nestNumber ?? this.nestNumber,
+      firstEggDate: firstEggDate ?? this.firstEggDate,
+      maleExits: maleExits ?? this.maleExits,
+      femaleExits: femaleExits ?? this.femaleExits,
     );
   }
 }

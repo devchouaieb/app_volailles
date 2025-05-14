@@ -246,6 +246,25 @@ const markBirdForSale = asyncHandler(async (req, res) => {
   res.status(200).json(updatedBird);
 });
 
+const getTotalSold = asyncHandler(async (req, res) => {
+  console.log("✅ Hit totalSold endpoint");
+  console.log("req.user.id", req.user.id);
+  try {
+    
+      const totalValue = await Bird.aggregate([
+        { $match: { seller: req.user._id ,  soldPrice: { $ne: null }} },
+        { $group: { _id: null, total: { $sum: '$soldPrice' } } }
+      ]);
+       const total = totalValue[0]?.total;
+      res.status(200).json({ 
+        success: true, 
+        data: total ? parseFloat(total.toString()) : 0 
+      });
+    } catch (error) {
+      res.status(400).json({ success: false, message: error.message });
+    }
+});
+
 module.exports = {
   getBird,
   getBirds,
@@ -257,5 +276,6 @@ module.exports = {
   getBirdsForSale,
   getBirdsNotSold,
   markBirdForSale,
-  purchaseBird
+  purchaseBird ,
+  getTotalSold
 }; 

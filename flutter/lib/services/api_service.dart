@@ -1,7 +1,9 @@
 import 'dart:convert';
-import 'package:http/http.dart' as http;
-import 'package:app_volailles/services/auth_service.dart';
+
 import 'package:app_volailles/config/config.dart';
+import 'package:app_volailles/services/auth_service.dart';
+import 'package:app_volailles/utils/api_exception.dart';
+import 'package:http/http.dart' as http;
 
 class ApiService {
   final String baseUrl = Config.baseUrl;
@@ -52,12 +54,10 @@ class ApiService {
       // Test de connexion avant chaque requête
       final isConnected = await testConnection();
       if (!isConnected) {
-        throw Exception(
-          'Impossible de se connecter au serveur. Vérifiez que:\n'
-          '1. Le serveur backend est en cours d\'exécution sur le port 5000\n'
-          '2. Vous utilisez bien l\'émulateur Android\n'
-          '3. L\'adresse du serveur est correcte: $baseUrl\n'
-          '4. Votre connexion internet est active',
+        throw ApiException(
+          'Impossible de se connecter au serveur. \n '
+              'Vérifiez votre connexion internet'
+
         );
       }
 
@@ -75,13 +75,11 @@ class ApiService {
             },
           )
           .timeout(
-            const Duration(seconds: 10),
+            const Duration(seconds: 5),
             onTimeout: () {
               throw Exception(
-                'La requête a expiré. Vérifiez que:\n'
-                '1. Le serveur backend est en cours d\'exécution\n'
-                '2. L\'adresse du serveur est correcte: $baseUrl\n'
-                '3. Votre connexion internet est active',
+                'La requête a expiré. Veulliez réssayer\n'
+               ,
               );
             },
           );
@@ -95,16 +93,13 @@ class ApiService {
         return decodedResponse;
       } else if (response.statusCode == 401) {
         await _authService.logout();
-        throw Exception('Session expirée. Veuillez vous reconnecter.');
+        throw ApiException('Session expirée. Veuillez vous reconnecter.');
       } else if (response.statusCode == 404) {
-        throw Exception(
-          'Le serveur n\'est pas accessible. Vérifiez que:\n'
-          '1. Le serveur backend est en cours d\'exécution\n'
-          '2. L\'adresse du serveur est correcte: $baseUrl\n'
-          '3. Le port 5000 n\'est pas utilisé par une autre application\n'
-          '4. Si vous utilisez un émulateur Android, l\'adresse doit être: http://10.0.2.2:5000\n'
-          '5. Si vous utilisez un appareil physique, l\'adresse doit être: http://VOTRE_IP:5000',
-        );
+        throw ApiException(
+          'Le serveur n\'est pas accessible.\n'
+              ' Vérifiez  votre connexion internet'
+
+       );
       } else {
         throw Exception(
           'Erreur lors de la requête: ${response.statusCode}\n'
@@ -113,24 +108,16 @@ class ApiService {
       }
     } on http.ClientException catch (e) {
       print('⚠️ Erreur client: $e');
-      throw Exception(
-        'Impossible de se connecter au serveur. Vérifiez que:\n'
-        '1. Le serveur backend est en cours d\'exécution\n'
-        '2. Votre connexion internet est active\n'
-        '3. L\'adresse du serveur est correcte: $baseUrl\n'
-        '4. Si vous utilisez un émulateur Android, l\'adresse doit être: http://10.0.2.2:5000\n'
-        '5. Si vous utilisez un appareil physique, l\'adresse doit être: http://VOTRE_IP:5000',
+      throw ApiException(
+        'Impossible de se connecter au serveur. Vérifiez réssayer',
       );
     } catch (e) {
       print('⚠️ Erreur réseau: $e');
-      throw Exception(
-        'Erreur de connexion. Vérifiez que:\n'
-        '1. Le serveur backend est en cours d\'exécution\n'
-        '2. Votre connexion internet est active\n'
-        '3. L\'adresse du serveur est correcte: $baseUrl\n'
-        '4. Si vous utilisez un émulateur Android, l\'adresse doit être: http://10.0.2.2:5000\n'
-        '5. Si vous utilisez un appareil physique, l\'adresse doit être: http://VOTRE_IP:5000',
-      );
+      if (e is ApiException) {
+        rethrow;
+      } else {
+        throw Exception('Erreur de connexion');
+      }
     }
   }
 
@@ -159,14 +146,20 @@ class ApiService {
         return decodedResponse;
       } else if (response.statusCode == 401) {
         await _authService.logout();
-        throw Exception('Session expirée. Veuillez vous reconnecter.');
+        throw ApiException('Session expirée. Veuillez vous reconnecter.');
       } else {
-        throw Exception(decodedResponse['message'] ?? 'Erreur lors de la requête: ${response.statusCode}');
+        throw ApiException(
+          decodedResponse['message'] ??
+              'Erreur lors de la requête: ${response.statusCode}',
+        );
       }
     } catch (e) {
       print('⚠️ Erreur réseau: $e');
-      throw Exception('Erreur réseau: $e');
-    }
+      if (e is ApiException) {
+        rethrow;
+      } else {
+        throw Exception('Erreur réseau: $e');
+    }}
   }
 
   // Méthode PUT avec token d'authentification
@@ -188,20 +181,26 @@ class ApiService {
 
       print('📊 Code de statut: ${response.statusCode}');
       print('📦 Réponse brute: ${response.body}');
-
+      final decodedResponse = jsonDecode(response.body);
       if (response.statusCode == 200) {
-        final decodedResponse = jsonDecode(response.body);
         print('📦 Réponse décodée: $decodedResponse');
         return decodedResponse;
       } else if (response.statusCode == 401) {
         await _authService.logout();
-        throw Exception('Session expirée. Veuillez vous reconnecter.');
+        throw ApiException('Session expirée. Veuillez vous reconnecter.');
       } else {
-        throw Exception('Erreur lors de la requête: ${response.statusCode}');
+        throw ApiException(
+          decodedResponse['message'] ??
+              'Erreur lors de la requête: ${response.statusCode}',
+        );
       }
     } catch (e) {
       print('⚠️ Erreur réseau: $e');
-      throw Exception('Erreur réseau: $e');
+      if (e is ApiException) {
+        rethrow;
+      } else {
+        throw Exception('Erreur réseau: $e');
+      }
     }
   }
 

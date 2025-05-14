@@ -1,3 +1,5 @@
+import 'package:app_volailles/utils/api_exception.dart';
+import 'package:app_volailles/utils/dialog_error_helpers.dart';
 import 'package:flutter/material.dart';
 import 'package:app_volailles/models/cage.dart';
 import 'package:app_volailles/models/bird.dart';
@@ -66,7 +68,9 @@ class _CagesPageState extends State<CagesPage> {
       setState(() {
         _cages.add(newCage);
         if (newCage.male?.id != null) {
-          widget.birds.firstWhere((bird) => bird.id == newCage.male!.id).cageNumber =
+          widget.birds
+              .firstWhere((bird) => bird.id == newCage.male!.id)
+              .cageNumber =
               newCage.cageNumber;
         }
         if (newCage.female?.id != null) {
@@ -89,17 +93,15 @@ class _CagesPageState extends State<CagesPage> {
     } catch (e) {
       if (!mounted) return;
       setState(() {
-        _errorMessage = e.toString();
         _isLoading = false;
       });
 
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Erreur lors de l\'ajout: ${e.toString()}'),
-            backgroundColor: Colors.red,
-          ),
-        );
+        String errorMessage = (e is ApiException)
+            ? e.message
+            : "Erreur lors de l'ajout de la cage";
+        DialogErrorHelpers.showErrorDialog(
+            context, title: "Echec de l'ajout", message: errorMessage);
       }
     }
   }
@@ -110,7 +112,8 @@ class _CagesPageState extends State<CagesPage> {
     final confirmed = await showDialog<bool>(
       context: context,
       builder:
-          (context) => AlertDialog(
+          (context) =>
+          AlertDialog(
             title: const Text("Supprimer la cage ?"),
             content: const Text(
               "Êtes-vous sûr de vouloir supprimer cette cage ?",
@@ -156,17 +159,19 @@ class _CagesPageState extends State<CagesPage> {
     } catch (e) {
       if (!mounted) return;
       setState(() {
-        _errorMessage = e.toString();
+
         _isLoading = false;
       });
 
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Erreur lors de la suppression: ${e.toString()}'),
-            backgroundColor: Colors.red,
-          ),
-        );
+
+        String errorMessage = (e is ApiException)
+            ? e.message
+            : "Erreur lors de la suppression de la cage";
+        DialogErrorHelpers.showErrorDialog(
+            context, title: "Echec de la suppression", message: errorMessage);
+
+
       }
     }
   }
@@ -176,7 +181,9 @@ class _CagesPageState extends State<CagesPage> {
 
     final Cage? newCage = await showDialog<Cage>(
       context: context,
-      builder: (_) => AddCageDialog(birds: widget.birds.where((bird) => bird.cage == null).toList()),
+      builder: (_) =>
+          AddCageDialog(
+              birds: widget.birds.where((bird) => bird.cage == null).toList()),
     );
 
     if (newCage != null) {
@@ -199,120 +206,122 @@ class _CagesPageState extends State<CagesPage> {
         ],
       ),
       body:
-          _isLoading
-              ? const Center(child: CircularProgressIndicator())
-              : _errorMessage != null
-              ? Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
+      _isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : _errorMessage != null
+          ? Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              'Erreur: $_errorMessage',
+              textAlign: TextAlign.center,
+              style: const TextStyle(color: Colors.red),
+            ),
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: _loadCages,
+              child: const Text('Réessayer'),
+            ),
+          ],
+        ),
+      )
+          : _cages.isEmpty
+          ? Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.home, size: 60, color: Colors.grey),
+            const SizedBox(height: 16),
+            const Text(
+              'Aucune cage enregistrée',
+              style: TextStyle(fontSize: 18, color: Colors.grey),
+            ),
+            const SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: _openAddCageDialog,
+              child: const Text('Créer une cage'),
+            ),
+          ],
+        ),
+      )
+          : RefreshIndicator(
+        onRefresh: _loadCages,
+        child: ListView.builder(
+          padding: const EdgeInsets.all(16),
+          itemCount: _cages.length,
+          itemBuilder: (context, index) {
+            final cage = _cages[index];
+            return Card(
+              margin: const EdgeInsets.only(bottom: 16),
+              child: ListTile(
+                leading: CircleAvatar(
+                  backgroundColor: Colors.pink.shade50,
+                  child: const Icon(
+                    Icons.home,
+                    color: Color.fromARGB(255, 120, 4, 183),
+                  ),
+                ),
+                title: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Erreur: $_errorMessage',
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(color: Colors.red),
-                    ),
-                    const SizedBox(height: 20),
-                    ElevatedButton(
-                      onPressed: _loadCages,
-                      child: const Text('Réessayer'),
-                    ),
-                  ],
-                ),
-              )
-              : _cages.isEmpty
-              ? Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Icon(Icons.home, size: 60, color: Colors.grey),
-                    const SizedBox(height: 16),
-                    const Text(
-                      'Aucune cage enregistrée',
-                      style: TextStyle(fontSize: 18, color: Colors.grey),
-                    ),
-                    const SizedBox(height: 16),
-                    ElevatedButton(
-                      onPressed: _openAddCageDialog,
-                      child: const Text('Créer une cage'),
-                    ),
-                  ],
-                ),
-              )
-              : RefreshIndicator(
-                onRefresh: _loadCages,
-                child: ListView.builder(
-                  padding: const EdgeInsets.all(16),
-                  itemCount: _cages.length,
-                  itemBuilder: (context, index) {
-                    final cage = _cages[index];
-                    return Card(
-                      margin: const EdgeInsets.only(bottom: 16),
-                      child: ListTile(
-                        leading: CircleAvatar(
-                          backgroundColor: Colors.pink.shade50,
-                          child: const Icon(
-                            Icons.home,
-                            color: Color.fromARGB(255, 120, 4, 183),
-                          ),
-                        ),
-                        title: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              "Num : ${cage.cageNumber}",
-                              style: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 18,
-                              ),
-                            ),
-                            if (cage.male != null && cage.female != null)
-                              Text(
-                                "♂ ${cage.male!.identifier}     X     ♀ ${cage.female!.identifier}",
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              )
-                            else
-                              const Text(
-                                "Aucun oiseau assigné",
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.grey,
-                                ),
-                              ),
-                          ],
-                        ),
-                        subtitle: Text(
-                          cage.male != null && cage.female != null
-                              ? "${cage.male!.species} | ${cage.female!.species}"
-                              : cage.species,
-                          style: TextStyle(color: Colors.grey[600]),
-                        ),
-                        trailing: IconButton(
-                          icon: const Icon(Icons.delete, color: Colors.red),
-                          onPressed: () => _deleteCage(cage),
-                        ),
-                        onTap: () async {
-                          await Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => CageDetailsPage(
-                                cage: cage,
-                                availableCages: _cages,
-                                onCageUpdated: () {
-                                  _loadCages();
-                                },
-                              ),
-                            ),
-                          );
-                          // Refresh cages after returning from details page
-                          _loadCages();
-                        },
+                      "Num : ${cage.cageNumber}",
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18,
                       ),
-                    );
-                  },
+                    ),
+                    if (cage.male != null && cage.female != null)
+                      Text(
+                        "♂ ${cage.male!.identifier}     X     ♀ ${cage.female!
+                            .identifier}",
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      )
+                    else
+                      const Text(
+                        "Aucun oiseau assigné",
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.grey,
+                        ),
+                      ),
+                  ],
                 ),
+                subtitle: Text(
+                  cage.male != null && cage.female != null
+                      ? "${cage.male!.species} | ${cage.female!.species}"
+                      : cage.species,
+                  style: TextStyle(color: Colors.grey[600]),
+                ),
+                trailing: IconButton(
+                  icon: const Icon(Icons.delete, color: Colors.red),
+                  onPressed: () => _deleteCage(cage),
+                ),
+                onTap: () async {
+                  await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) =>
+                          CageDetailsPage(
+                            cage: cage,
+                            availableCages: _cages,
+                            onCageUpdated: () {
+                              _loadCages();
+                            },
+                          ),
+                    ),
+                  );
+                  // Refresh cages after returning from details page
+                  _loadCages();
+                },
               ),
+            );
+          },
+        ),
+      ),
       floatingActionButton: FloatingActionButton(
         onPressed: _isLoading ? null : _openAddCageDialog,
         backgroundColor: Colors.deepPurple,

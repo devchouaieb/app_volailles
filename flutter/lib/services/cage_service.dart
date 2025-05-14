@@ -1,6 +1,7 @@
 import 'package:app_volailles/models/bird.dart';
 import 'package:app_volailles/models/cage.dart';
 import 'package:app_volailles/services/api_service.dart';
+import 'package:app_volailles/utils/api_exception.dart';
 
 class CageService {
   final _apiService = ApiService();
@@ -35,10 +36,15 @@ class CageService {
       }
 
       print('⚠️ Format de réponse invalide: $response');
-      throw Exception('Format de réponse invalide');
+      throw ApiException('Erreur lors de la récupération des cages.');
     } catch (e) {
       print('⚠️ Erreur lors de la récupération des cages: $e');
-      rethrow;
+      if (e is ApiException) {
+        rethrow;
+      } else {
+        throw ApiException('Erreur lors de la récupération des cages.');
+      }
+
     }
   }
 
@@ -48,11 +54,17 @@ class CageService {
       if (response["success"] == true) {
         return Cage.fromJson(response['data']);
       } else {
-        throw Exception('Failed to create cage: ${response['message']}');
+        throw ApiException(
+          response['message'] ?? "Erreur lors de la création de la cage.",
+        );
       }
     } catch (e) {
       print('Error in createCage: $e');
-      throw Exception('Error creating cage: $e');
+      if (e is ApiException) {
+        rethrow;
+      } else {
+        throw ApiException("Erreur lors de la création de la cage.");
+      }
     }
   }
 
@@ -60,11 +72,17 @@ class CageService {
     try {
       final response = await _apiService.delete('cages/$id');
       if (response["success"] != true) {
-        throw Exception('Failed to delete cage: ${response.data['message']}');
+        throw ApiException(
+          response['message'] ?? "Erreur lors de la suppression de la cage.",
+        );
       }
     } catch (e) {
       print('Error in deleteCage: $e');
-      throw Exception('Error deleting cage: $e');
+      if (e is ApiException) {
+        rethrow;
+      } else {
+        throw ApiException("Erreur lors de la suppression de la cage.");
+      }
     }
   }
 
@@ -79,11 +97,21 @@ class CageService {
         'female': female?.id,
       });
       if (response['success'] != true) {
-        throw Exception('Failed to update cage birds: ${response['message']}');
+        print('Failed to update cage birds: ${response['message']}');
+        throw ApiException(
+          response['message'] ??
+              "Erreur lors de la mise à jour des oiseaux de la cage.",
+        );
       }
     } catch (e) {
       print('Error in updateCageBirds: $e');
-      throw Exception('Error updating cage birds: $e');
+      if (e is ApiException) {
+        rethrow;
+      } else {
+        throw ApiException(
+          "Erreur lors de la mise à jour des oiseaux de la cage.",
+        );
+      }
     }
   }
 }

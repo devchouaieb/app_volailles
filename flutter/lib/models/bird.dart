@@ -23,6 +23,9 @@ class Bird {
   String? motherId;
 
   String? fatherId;
+  String? lastCageNumber;
+  String? lastCageEntryDate;
+  String? lastCageExitDate;
 
   Bird({
     this.id,
@@ -46,6 +49,9 @@ class Bird {
     this.userId,
     this.motherId,
     this.fatherId,
+    this.lastCageNumber,
+    this.lastCageEntryDate,
+    this.lastCageExitDate,
   });
 
   // Conversion pour l'API
@@ -92,13 +98,26 @@ class Bird {
       map['_id'] = id;
     }
 
+    if (lastCageNumber != null) {
+      map["lastCageNumber"] = lastCageNumber;
+    }
+    if (lastCageEntryDate != null) {
+      map["lastCageEntryDate"] = lastCageEntryDate;
+    }
+    if (lastCageExitDate != null) {
+      map["lastCageExitDate"] = lastCageExitDate;
+    }
+
     return map;
   }
 
   String getStatus(String? currentUserId) {
     if (status == "sold" || sold || currentUserId == sellerId) {
       return 'Vendu';
-    } else if (status == "Owned" || currentUserId == userId) {
+    } else if (status == "Mort") {
+      return status;
+    }
+    else if (status == "Owned" || currentUserId == userId) {
       return 'Possédé';
     } else {
       return status;
@@ -135,7 +154,10 @@ class Bird {
       sellerId: json['seller'],
       userId: json["user"],
       motherId: json["mother"],
-      fatherId: json["father"],
+      fatherId: json['fatherId'],
+      lastCageNumber: json['lastCageNumber'],
+      lastCageEntryDate: json['lastCageEntryDate'],
+      lastCageExitDate: json['lastCageExitDate'],
     );
   }
 

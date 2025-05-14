@@ -1,5 +1,6 @@
 import 'package:app_volailles/models/nest.dart';
 import 'package:app_volailles/services/api_service.dart';
+import 'package:app_volailles/utils/api_exception.dart';
 
 class NestService {
   final _apiService = ApiService();
@@ -25,11 +26,15 @@ class NestService {
       if (response["success"] == true) {
         return Nest.fromJson(response['data']);
       } else {
-        throw Exception('Failed to create nest: ${response.data['message']}');
+        throw ApiException(response.data['message'] ?? "Erreur lors de la création du couvé.");
       }
     } catch (e) {
       print('Error in createNest: $e');
-      throw Exception('Error creating nest: $e');
+      if (e is ApiException) {
+        rethrow ;
+      } else {
+        throw ApiException('Erreur lors de la création du couvé: ');
+      }
     }
   }
 
@@ -42,11 +47,15 @@ class NestService {
       if (response["success"] == true) {
         return Nest.fromJson(response['data']);
       } else {
-        throw Exception('Failed to update nest: ${response.data['message']}');
+        throw ApiException(response.data['message'] ?? "Erreur lors de la mise à jour du couvé.");
       }
     } catch (e) {
       print('Error in updateNest: $e');
-      throw Exception('Error updating nest: $e');
+      if (e is ApiException) {
+        throw e;
+      } else {
+        throw ApiException('Erreur lors de la mise à jour du couvé: $e');
+      }
     }
   }
 

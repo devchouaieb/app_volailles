@@ -98,6 +98,7 @@ class AppDrawer extends StatelessWidget {
           _buildDrawerItem(Icons.store, 'Oiseaux à vendre'),
           _buildDrawerItem(Icons.bar_chart, 'Statistiques'),
           _buildDrawerItem(Icons.device_hub, 'Espèces'),
+          _buildDrawerItem(Icons.shopping_cart, 'Produits'),
           const Divider(),
           _buildDrawerItem(Icons.thermostat, 'Capteurs'),
           _buildDrawerItem(Icons.group, 'Associations'),

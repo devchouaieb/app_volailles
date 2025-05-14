@@ -1,7 +1,10 @@
 // lib/services/bird_service.dart
+import 'package:app_volailles/utils/api_exception.dart';
 import 'package:flutter/material.dart';
 import 'package:app_volailles/models/bird.dart';
 import 'package:app_volailles/services/api_service.dart';
+
+
 
 class BirdService {
   final _apiService = ApiService();
@@ -47,10 +50,10 @@ class BirdService {
       }
 
       print('⚠️ Format de réponse invalide: $response');
-      throw Exception('Format de réponse invalide');
+      throw ApiException('Impossible de récupérer les oiseaux');
     } catch (e) {
       print('⚠️ Erreur lors de la récupération des oiseaux: $e');
-      rethrow;
+      throw ApiException(e is ApiException ? e.message : 'Erreur lors de la récupération des oiseaux');
     }
   }
 
@@ -74,10 +77,10 @@ class BirdService {
       }
 
       print('⚠️ Format de réponse invalide: $response');
-      return [];
+      throw ApiException('Impossible de récupérer les oiseaux vendus');
     } catch (e) {
       print('⚠️ Erreur lors de la récupération des oiseaux vendus: $e');
-      return [];
+      throw ApiException(e is ApiException ? e.message : 'Erreur lors de la récupération des oiseaux vendus');
     }
   }
 
@@ -171,11 +174,8 @@ class BirdService {
         return createdBird;
       } else {
         print('⚠️ Erreur lors de la création de l\'oiseau: ${response['message']}');
-        throw Exception(response['message']);
+        throw ApiException(response['message'] ?? 'Erreur lors de la création de l\'oiseau');
       }
-
-      print('⚠️ Format de réponse invalide: $response');
-      throw Exception('Format de réponse invalide');
     } catch (e ) {
       print('⚠️ Erreur lors de la création de l\'oiseau: $e');
       rethrow;
@@ -198,7 +198,7 @@ class BirdService {
       }
 
       print('⚠️ Format de réponse invalide: $response');
-      throw Exception('Format de réponse invalide');
+      throw ApiException('Format de réponse invalide');
     } catch (e) {
       print('⚠️ Erreur lors de la mise à jour de l\'oiseau: $e');
       rethrow;
@@ -324,19 +324,42 @@ class BirdService {
   }
 
   // Mettre à jour la cage d'un oiseau
-  Future<void> updateBirdCage(String birdId, String? cageId ,String cageNumber) async {
+  Future<void> updateBirdCage(String birdId, String? cageId ,String cageNumber ,
+      {String? lastCageNumber, String? lastCageEntryDate, String? lastCageExitDate}) async {
     try {
       print('🔄 Mise à jour de la cage de l\'oiseau $birdId...');
       final response = await _apiService.put('birds/$birdId', {
         'cage': cageId,
         'cageNumber': cageNumber,
+        'lastCageNumber': lastCageNumber,
+        'lastCageEntryDate': lastCageEntryDate,
+        'lastCageExitDate': lastCageExitDate,
       });
       if (response['success'] != true) {
-        throw Exception('Failed to update bird cage: ${response['message']}');
+        print('⚠️ Erreur lors de la mise à jour de la cage: ${response['message']}');
+        throw ApiException(response['message'] ?? 'Erreur lors de la mise à jour de la cage');
       }
     } catch (e) {
       print('Error in updateBirdCage: $e');
-      throw Exception('Error updating bird cage: $e');
+      if (e is ApiException) {
+        rethrow ;
+      } else {
+        throw ApiException('Erreur lors de la mise à jour de la cage');
+      }
+    }
+  }
+
+  Future<double> getTotalSold() async {
+    try {
+      final response = await _apiService.get('birds/totalSold');
+      if (response["success"] == true) {
+        return (response['data'] as num).toDouble();
+      } else {
+        throw ApiException(response['message'] ?? "Erreur lors de la récupération du total vendu");
+      }
+    } catch (e) {
+      print('Error in getTotalProductValue: $e');
+      throw Exception('Error getting total product value: $e');
     }
   }
 }

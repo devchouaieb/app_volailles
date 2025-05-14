@@ -6,6 +6,7 @@ import 'package:app_volailles/pages/sell_bird_dialog.dart';
 import 'package:app_volailles/pages/mark_for_sale_dialog.dart';
 import 'package:app_volailles/services/bird_service.dart';
 import 'package:app_volailles/utils/date_utils.dart';
+import 'package:app_volailles/utils/dialog_error_helpers.dart';
 
 class BirdsPage extends StatefulWidget {
   final String? userId;
@@ -71,21 +72,17 @@ class _BirdsPageState extends State<BirdsPage> {
       await _loadBirds();
 
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Oiseau sauvegardé avec succès'),
-            backgroundColor: Colors.green,
-          ),
+        DialogErrorHelpers.showSuccessSnackBar(
+          context,
+          message: 'Oiseau sauvegardé avec succès',
         );
       }
     } catch (e) {
       if (!mounted) return;
       setState(() => _isLoading = false);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Erreur lors de la sauvegarde: $e'),
-          backgroundColor: Colors.red,
-        ),
+      DialogErrorHelpers.showErrorSnackBar(
+        context,
+        message: 'Erreur lors de la sauvegarde: $e',
       );
     }
   }
@@ -93,31 +90,41 @@ class _BirdsPageState extends State<BirdsPage> {
   Future<void> _deleteBird(Bird bird) async {
     if (!mounted) return;
 
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder:
-          (context) => AlertDialog(
-            title: const Text("Supprimer l'oiseau"),
-            content: Text(
-              "Êtes-vous sûr de vouloir supprimer l'oiseau ${bird.identifier} ?",
-            ),
-            actions: [
-              TextButton(
-                child: const Text("Annuler"),
-                onPressed: () => Navigator.pop(context, false),
-              ),
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.red.shade100,
-                ),
-                child: const Text("Confirmer"),
-                onPressed: () => Navigator.pop(context, true),
-              ),
-            ],
-          ),
+    final confirmed = await DialogErrorHelpers.showConfirmationDialog(
+      context,
+      title: "Supprimer l'oiseau",
+      message: "Êtes-vous sûr de vouloir supprimer l'oiseau ${bird.identifier} ?",
+      confirmText: 'Supprimer',
+      cancelText: 'Annuler',
     );
 
     if (confirmed != true) return;
+
+    setState(() => _isLoading = true);
+
+    try {
+      await _birdService.deleteBird(bird.id!);
+      if (!mounted) return;
+
+      setState(() {
+        _birds.removeWhere((b) => b.id == bird.id);
+        _isLoading = false;
+      });
+
+      if (mounted) {
+        DialogErrorHelpers.showSuccessSnackBar(
+          context,
+          message: 'Oiseau supprimé avec succès',
+        );
+      }
+    } catch (e) {
+      if (!mounted) return;
+      setState(() => _isLoading = false);
+      DialogErrorHelpers.showErrorSnackBar(
+        context,
+        message: 'Erreur lors de la suppression: $e',
+      );
+    }
 
     setState(() => _isLoading = true);
 
@@ -176,20 +183,16 @@ class _BirdsPageState extends State<BirdsPage> {
                   _isLoading = false;
                 });
 
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Oiseau vendu avec succès'),
-                    backgroundColor: Colors.green,
-                  ),
+                DialogErrorHelpers.showSuccessSnackBar(
+                  context,
+                  message: 'Oiseau vendu avec succès',
                 );
               } catch (e) {
                 if (!mounted) return;
                 setState(() => _isLoading = false);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text('Erreur lors de la vente: $e'),
-                    backgroundColor: Colors.red,
-                  ),
+                DialogErrorHelpers.showErrorSnackBar(
+                  context,
+                  message: 'Erreur lors de la vente: $e',
                 );
               }
             },
@@ -225,21 +228,17 @@ class _BirdsPageState extends State<BirdsPage> {
       });
 
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Oiseau marqué à vendre'),
-            backgroundColor: Colors.green,
-          ),
+        DialogErrorHelpers.showSuccessSnackBar(
+          context,
+          message: 'Oiseau marqué à vendre',
         );
       }
     } catch (e) {
       if (!mounted) return;
       setState(() => _isLoading = false);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Erreur lors de marquer à vendre: $e'),
-          backgroundColor: Colors.red,
-        ),
+      DialogErrorHelpers.showErrorSnackBar(
+        context,
+        message: 'Erreur lors de marquer à vendre: $e',
       );
     }
   }

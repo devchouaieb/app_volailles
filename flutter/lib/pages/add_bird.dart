@@ -124,7 +124,7 @@ class _AddBirdPageState extends State<AddBirdPage> {
           birthDate: _birthDate!.toIso8601String(),
           price: _price,
           motherId: widget.cage?.female?.id,
-          fatherId: widget.cage?.male?.id
+          fatherId: widget.cage?.male?.id,
         );
 
         widget.onSave(newBird);
@@ -177,7 +177,7 @@ class _AddBirdPageState extends State<AddBirdPage> {
             const Text("Genre *"),
             Row(
               children: [
-                Expanded(
+                Flexible(
                   child: RadioListTile<String>(
                     title: const Text("Mâle"),
                     value: Constants.male,
@@ -185,7 +185,7 @@ class _AddBirdPageState extends State<AddBirdPage> {
                     onChanged: (value) => setState(() => _gender = value!),
                   ),
                 ),
-                Expanded(
+                Flexible(
                   child: RadioListTile<String>(
                     title: const Text("Femelle"),
                     value: Constants.female,
@@ -202,7 +202,12 @@ class _AddBirdPageState extends State<AddBirdPage> {
               decoration: const InputDecoration(labelText: 'Catégorie *'),
               items:
                   getAllCategories()
-                      .map((e) => DropdownMenuItem(value: e, child: Text(e)))
+                      .map(
+                        (e) => DropdownMenuItem(
+                          value: e,
+                          child:  Text(e),
+                        ),
+                      )
                       .toList(),
               validator: (value) => value == null ? 'Champ requis' : null,
               onChanged: (value) {
@@ -216,6 +221,7 @@ class _AddBirdPageState extends State<AddBirdPage> {
             const SizedBox(height: 16),
             // Species Selection
             DropdownButtonFormField<String>(
+              isExpanded: true,
               value: _selectedSpecies,
               decoration: const InputDecoration(labelText: 'Espèce *'),
               items:
@@ -226,6 +232,9 @@ class _AddBirdPageState extends State<AddBirdPage> {
                             (species) => DropdownMenuItem(
                               value: species.commonName,
                               child: Text(
+                                softWrap: false,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
                                 '${species.commonName} (${species.scientificName})',
                               ),
                             ),
@@ -242,30 +251,30 @@ class _AddBirdPageState extends State<AddBirdPage> {
               value: _selectedVariety.isEmpty ? null : _selectedVariety,
               decoration: const InputDecoration(labelText: 'couleur'),
               items:
-              [
-                'beige',
-                'blanc',
-                'bleu',
-                'gris',
-                'jaune',
-                'marron',
-                'noir',
-                'ocre',
-                'ocre clair',
-                'ocre foncé',
-                'ocre moyen',
-                'ocre pale',
-                'ocre sombre',
-                'ocre vif',
-                'orange',
-                'rose',
-                'rouge',
-                'turquoise',
-                'violet',
-                'melange',
-              ]
-                  .map((e) => DropdownMenuItem(value: e, child: Text(e)))
-                  .toList(),
+                  [
+                        'beige',
+                        'blanc',
+                        'bleu',
+                        'gris',
+                        'jaune',
+                        'marron',
+                        'noir',
+                        'ocre',
+                        'ocre clair',
+                        'ocre foncé',
+                        'ocre moyen',
+                        'ocre pale',
+                        'ocre sombre',
+                        'ocre vif',
+                        'orange',
+                        'rose',
+                        'rouge',
+                        'turquoise',
+                        'violet',
+                        'melange',
+                      ]
+                      .map((e) => DropdownMenuItem(value: e, child: Text(e)))
+                      .toList(),
               onChanged:
                   (value) => setState(() => _selectedVariety = value ?? ''),
             ),
@@ -280,7 +289,7 @@ class _AddBirdPageState extends State<AddBirdPage> {
               validator: (value) => value == null ? 'Champ requis' : null,
               onChanged: (value) => setState(() => _selectedStatus = value),
             ),
-          /*  const SizedBox(height: 16),
+            /*  const SizedBox(height: 16),
             TextFormField(
               initialValue: _cage,
               decoration: const InputDecoration(labelText: 'Cage'),

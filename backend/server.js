@@ -12,6 +12,7 @@ const nestsRoutes = require('./routes/nestsRoutes');
 const reseauRoutes = require('./routes/reseauRoutes');
 const associationRoutes = require('./routes/associationRoutes');
 const sensorRoutes = require('./routes/sensorRoutes');
+const productRoutes = require('./routes/productRoutes');
 
 // Charger les variables d'environnement
 dotenv.config({ path: './config/config.env' });
@@ -40,6 +41,7 @@ app.use('/api/nests', nestsRoutes);
 app.use('/api/reseaux', reseauRoutes);
 app.use('/api/associations', associationRoutes);
 app.use('/api/sensor_data', sensorRoutes);
+app.use('/api/products',productRoutes);
 
 // Gestion des erreurs 404
 app.use((req, res, next) => {
