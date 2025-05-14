@@ -59,13 +59,13 @@ const updateBird = asyncHandler(async (req, res) => {
 
   }
 
-  // Make sure the logged in user matches the bird user
+ /*  // Make sure the logged in user matches the bird user
   if (bird.user.toString() !== req.user.id) {
     return res.status(400).json({
       success: false,
       message: 'Utilisateur non autorisé'
     });
-  }
+  } */
 
   const updatedBird = await Bird.findByIdAndUpdate(req.params.id, req.body, {
     new: true,
