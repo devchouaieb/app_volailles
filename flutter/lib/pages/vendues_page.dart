@@ -128,8 +128,9 @@ class _VenduesPageState extends State<VenduesPage> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           const SizedBox(height: 4),
+                          Text('Categorie:${bird.category}'),
                           Text('Espèce: ${bird.species}'),
-                          Text('Variété: ${bird.color}'),
+                          Text('Couleur: ${bird.color}'),
                           Row(
                             children: [
                               Text('Prix de vente: '),

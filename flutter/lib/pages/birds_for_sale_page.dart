@@ -136,8 +136,9 @@ class _BirdsForSalePageState extends State<BirdsForSalePage> {
                 'Oiseau: ${bird.identifier}',
                 style: const TextStyle(fontWeight: FontWeight.bold),
               ),
+              Text('Categorie:${bird.category}'),
               Text('Espèce: ${bird.species}'),
-              Text('Variété: ${bird.color}'),
+              Text('Couleur: ${bird.color}'),
               Text('Prix demandé: ${bird.askingPrice} DT'),
               const SizedBox(height: 16),
               TextFormField(
